@@ -1,0 +1,7 @@
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+.hover-effect:hover {
+    opacity: 0.8; /* Mengurangi opasitas saat hover */
+    transform: scale(1.05); /* Membesarkan elemen sedikit */
+    transition: transform 0.3s ease, opacity 0.3s ease; /* Animasi transisi */
+}
