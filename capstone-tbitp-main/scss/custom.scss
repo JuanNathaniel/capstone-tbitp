@@ -1,0 +1,119 @@
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+// Menggunakan flexbox pada sidebar dan konten utama
+.container-fluid {
+    display: flex;
+    flex-direction: row; // Menyusun logo dan sidebar berdampingan
+}
+
+.sidebar {
+    position: fixed;
+    height: 100vh;
+    width: 250px;
+    background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
+    color: white;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: all 0.3s ease;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex-grow: 1; // Memberi ruang lebih untuk konten utama
+    padding: 20px;
+    margin-left: 250px; // Mengimbangi lebar sidebar
+}
+
+.user-info, .logout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-size: 1.2rem;
+    padding-left: 20px;
+    background-color: transparent;
+    width: auto; // Hapus w-100 dari HTML
+}
+
+.nav-link {
+    color: #d1d1e9;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    justify-content: center;
+}
+
+.nav-link:hover {
+    color: white;
+    background-color: #3b4c6b;
+    border-radius: 8px;
+}
+
+.sidebar .nav-link {
+    color: white; /* Mengubah warna teks menjadi putih */
+}
+
+.logout {
+    margin-top: auto; // Mendorong tombol logout ke bagian bawah
+}
+
+@media (max-width: 770px) {
+    /* Topbar di atas */
+    .container-fluid {
+        display: flex;
+        flex-direction: column; /* Menyusun elemen secara vertikal */
+        justify-content: flex-start;
+    }
+
+    .sidebar {
+        width: 100%; /* Sidebar akan mengambil seluruh lebar layar */
+        position: relative; /* Posisi relative agar dapat berada di bawah topbar */
+        height: auto; /* Sesuaikan dengan konten */
+        background: linear-gradient(to right, #344EAD, #1767A6); /* Masih tetap menggunakan gradasi */
+    }
+
+    .main-content {
+        margin-top: 10px; /* Memberikan jarak agar tidak menempel dengan sidebar */
+        margin-left: 0; /* Menghapus margin kiri */
+    }
+
+    /* Atur carousel agar berada di bawah topbar */
+    .carousel-inner {
+        margin-top: 60px; /* Memberikan ruang antara carousel dan topbar */
+    }
+
+    /* Menampilkan elemen-elemen nav secara vertikal di bawah sidebar */
+    .nav-link {
+        display: block;
+        text-align: left; /* Align teks ke kiri untuk tampilan mobile */
+    }
+
+    /* Menyembunyikan tombol logout di layar kecil */
+    .sidebar .logout {
+        display: none !important;
+    }
+}
+
+// SCSS untuk menambahkan efek transisi "push"
+.carousel-item {
+    transition: transform 0.5s ease-in-out; // Transisi untuk efek geser
+}
+  
+// Ketika gambar aktif, item berada di posisi default
+.carousel-item-next, .carousel-item-prev, .carousel-item.active {
+    transform: translateX(0); // Set posisi default
+}
+  
+// Menggeser gambar ke kanan saat gambar berikutnya muncul
+.carousel-item-next {
+    transform: translateX(100%); // Pindah ke kanan
+}
+  
+// Menggeser gambar ke kiri saat gambar sebelumnya muncul
+.carousel-item-prev {
+    transform: translateX(-100%); // Pindah ke kiri
+}
+
