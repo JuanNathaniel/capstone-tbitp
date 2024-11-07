@@ -31,10 +31,17 @@
             cursor: pointer;
         }
 
+        /* Show dropdown on hover, push elements down */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            position: relative; /* Position relative to push content below */
+            margin-top: 5px;
+        }
+
         .dropdown-menu {
-            display: none;
+            display: none; /* Hide by default, shown on hover */
             padding: 0;
-            background-color: #444;
+            background-color: #444; /* Background for dropdown */
         }
 
         .dropdown-item {
@@ -74,10 +81,7 @@
         table th {
             background-color: #10375C !important;
             color: white !important;
-        }
-
-        tbody tr:hover {
-            background-color: #f1f1f1; /* Efek hover pada baris tabel */
+            text-align: center !important;
         }
 
         .table td, .table th {
@@ -93,6 +97,7 @@
 
 <body>
     <?php
+    session_start();
     // Koneksi ke database
     $servername = "localhost";
     $username = "root";
@@ -106,9 +111,24 @@
     if ($conn->connect_error) {
         die("Koneksi gagal: " . $conn->connect_error);
     }
+    if (isset($_SESSION['status']) && $_SESSION['status'] == 'success') {
+        echo '<script type="text/javascript">
+            window.onload = function() {
+                Swal.fire({
+                    icon: "success",
+                    title: "Data berhasil diubah!",
+                    showConfirmButton: false,
+                    timer: 2500 // Pop-up akan hilang setelah 2.5 detik
+                });
+            };
+        </script>';
+        
+        // Hapus status session setelah menampilkan SweetAlert
+        unset($_SESSION['status']);
+    }
 
     // Query untuk mengambil data
-    $sql = "SELECT guru.nama, daftar_hadir_guru.jam_datang, daftar_hadir_guru.jam_pulang, 
+    $sql = "SELECT guru.id_guru, guru.nama, daftar_hadir_guru.id_daftarhadirguru, daftar_hadir_guru.jam_datang, daftar_hadir_guru.jam_pulang, 
             daftar_hadir_guru.tanda_tangan1, daftar_hadir_guru.date, daftar_hadir_guru.ket
             FROM daftar_hadir_guru
             JOIN guru ON guru.id_guru = daftar_hadir_guru.id_guru
@@ -129,72 +149,27 @@
 
     <div class="container-fluid">
         <div class="row">
-
-            <div class="hover-trigger"></div>
-            <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 sidebar" id="sidebar">
-                <button type="button" class="btn btn-outline-primary w-100 user-info d-flex align-items-center text-white mb-3">
-                    <i class="bi bi-person-circle me-2"></i>Aming
-                </button>
-
-                <div class="dropdown">
-                    <a class="dropdown-toggle text-decoration-none" href="#" role="button">
-                        Guru dan Anak
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item text-decoration-none" href="#">Absensi Datang dan Jemput</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Daftar Hadir Guru</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Aturan Penjemputan</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Buku Induk Peserta Didik</a></li>
-                    </ul>
-                </div>
-
-                <div class="dropdown mt-3">
-                    <a class="dropdown-toggle text-decoration-none" href="#" role="button">
-                        Keuangan
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item text-decoration-none" href="#">Pemasukan dan Pengeluaran</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Rencana Kegiatan Anggaran</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Rincian Biaya Pendidikan</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Laporan Dana</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Rekapitulasi Pembayaran</a></li>
-                    </ul>
-                </div>
-                
-                <div class="dropdown mt-3">
-                    <a class="dropdown-toggle text-decoration-none" href="#" role="button">
-                        Pembelajaran
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item text-decoration-none" href="#">Jadwal Tematik dan Kegiatan</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Laporan Perkembangan</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Formulir Deteksi dan Tumbuh Kembang</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Data Kurikulum Merdeka</a></li>
-                    </ul>
-                </div>
-
-                <button type="button" class="btn btn-outline-primary w-100 logout d-flex align-items-center">
-                    <i class="bi bi-box-arrow-left me-2"></i>Logout
-                </button>
-            </nav>
+            <?php include 'sidebar.php'; ?> <!-- Include file sidebar -->
 
             <!-- Konten Utama -->
             <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
                 <h2 class="bg-info rounded p-4 text-white transition-bg">Daftar hadir guru</h2>
                 <div class="content">
                     <div class="d-flex justify-content-between mb-3">
-                        <div>
-                            <button class="btn btn-primary">CREATE</button>
-                            <label>Bulan: <input type="text" class="input-date" placeholder="Bulan"></label>
-                            <label>Hari/Tgl: <input type="text" class="input-date" placeholder="Tanggal"></label>
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-primary me-2" onclick="window.location.href='create_daftar_hadir_guru.php'">Create</button>
+                            <form action="daftar_hadir_guru.php" method="GET" class="d-flex align-items-center">
+                                <label for="filter_date" class="form-label me-2 mb-0">&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <input type="date" name="filter_date" id="filter_date" class="form-control me-2" value="<?php echo isset($_GET['filter_date']) ? $_GET['filter_date'] : ''; ?>">
+                                <button type="submit" class="btn btn-primary" id="searchBtn">Search</button>
+                            </form>
                         </div>
                     </div>
                 </div>
 
                 <?php foreach ($dataByDate as $date => $data) : ?>
                     <br>
-                    <h4>Date : <?php echo $date; ?></h4>
+                    <h5>Date : <?php echo $date; ?></h5>
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
@@ -218,7 +193,19 @@
                                 echo "<td>" . $row["jam_pulang"] . "</td>";
                                 echo "<td>" . $row["ket"] . "</td>";
                                 echo "<td>" . $row["tanda_tangan1"] . "</td>";
-                                echo "<td><button class='btn btn-primary'>Edit</button>&nbsp;&nbsp;<button class='btn btn-primary'>Delete</button></td>";
+                                echo "<td>
+                                    <button class='btn btn-warning' 
+                                        data-bs-toggle='modal' 
+                                        data-bs-target='#editModal' 
+                                        data-id='{$row['id_daftarhadirguru']}'
+                                        data-id-guru='{$row['id_guru']}'
+                                        data-nama='{$row['nama']}'
+                                        data-jam-datang='{$row['jam_datang']}'
+                                        data-jam-pulang='{$row['jam_pulang']}'
+                                        data-keterangan='{$row['ket']}'
+                                        data-tanggal='{$row['date']}'>Edit</button>&nbsp;&nbsp;
+                                    <button class='btn btn-danger delete-btn' data-id='{$row['id_daftarhadirguru']}'>Delete</button>
+                                </td>";
                                 echo "</tr>";
                                 $no++;
                             endforeach;
@@ -231,9 +218,123 @@
         </div>
     </div>
 
-    <!-- Bootstrap JavaScript dan Ikon -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Modal Edit Daftar Hadir Guru -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Daftar Hadir Guru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="edit_daftar_hadir_guru.php" method="POST">
+                        <input type="hidden" id="edit_id" name="id_daftar_hadir_guru">
+                        
+                        <div class="mb-3">
+                            <label for="edit_id_guru" class="form-label">Nama Guru</label>
+                            <select id="edit_id_guru" name="id_guru" class="form-select" required>
+                                <?php
+                                    // Koneksi ke database untuk menampilkan daftar nama guru
+                                    $conn = new mysqli($servername, $username, $password, $dbname);
+                                    $sql = "SELECT id_guru, nama FROM guru";
+                                    $result = $conn->query($sql);
+
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo "<option value='{$row['id_guru']}'>{$row['nama']}</option>";
+                                        }
+                                    }
+                                    $conn->close();
+                                ?>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_jam_datang" class="form-label">Jam Datang</label>
+                            <input type="time" class="form-control" id="edit_jam_datang" name="jam_datang" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_jam_pulang" class="form-label">Jam Pulang</label>
+                            <input type="time" class="form-control" id="edit_jam_pulang" name="jam_pulang" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_keterangan" class="form-label">Keterangan</label>
+                            <input type="text" class="form-control" id="edit_keterangan" name="keterangan" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_tanggal" class="form-label">Tanggal</label>
+                            <input type="date" class="form-control" id="edit_tanggal" name="tanggal" required>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Menangani ketika tombol edit diklik
+        const editButtons = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#editModal"]');
+        
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Ambil data dari atribut data-*
+                const idDaftarHadirGuru = this.getAttribute('data-id');
+                const namaGuru = this.getAttribute('data-nama');
+                const jamDatang = this.getAttribute('data-jam-datang');
+                const jamPulang = this.getAttribute('data-jam-pulang');
+                const keterangan = this.getAttribute('data-keterangan');
+                const tanggal = this.getAttribute('data-tanggal');
+                
+                // Isi form modal dengan data
+                document.getElementById('edit_id').value = idDaftarHadirGuru;
+                document.getElementById('edit_id_guru').value = this.getAttribute('data-id-guru');
+                document.getElementById('edit_jam_datang').value = jamDatang;
+                document.getElementById('edit_jam_pulang').value = jamPulang;
+                document.getElementById('edit_keterangan').value = keterangan;
+                document.getElementById('edit_tanggal').value = tanggal;
+            });
+        });
+
+
+        // Menangani ketika tombol delete ditekan
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+    
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const idToDelete = this.getAttribute('data-id'); // Ambil ID yang akan dihapus
+            
+                // Tampilkan konfirmasi SweetAlert2
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data ini akan dihapus secara permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, hapus!',
+                    cancelButtonText: 'No, batalkan!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Jika user memilih Yes, lakukan penghapusan
+                        window.location.href = 'delete_daftar_hadir_guru.php?id_daftarhadirguru=' + idToDelete;
+                    }
+                });
+            });
+        });
+    </script>
+    
+    <!-- Link untuk SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 
 </html>
