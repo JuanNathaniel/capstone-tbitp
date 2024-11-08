@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Nama file baru dengan menambahkan timestamp untuk mencegah duplikasi
         $dokumen_baru = uniqid('', true) . '.' . $fileExt;
-        $uploadDir = '../uploads/';
+        $uploadDir = '../uploads/bukuinduk/';
 
         // Pindahkan file ke folder uploads
         if (move_uploaded_file($fileTmpName, $uploadDir . $dokumen_baru)) {

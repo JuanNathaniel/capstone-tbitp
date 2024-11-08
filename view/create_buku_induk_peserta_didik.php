@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $newFileName = uniqid('', true) . '.' . $fileExt;
 
         // Lokasi folder tempat file akan disimpan
-        $uploadDir = '../uploads/';
+        $uploadDir = '../uploads/bukuinduk/';
 
         // Memindahkan file ke folder upload
         if (move_uploaded_file($fileTmpName, $uploadDir . $newFileName)) {
