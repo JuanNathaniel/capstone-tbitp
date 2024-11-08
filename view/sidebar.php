@@ -77,9 +77,12 @@
             <div class="hover-trigger"></div>
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 sidebar" id="sidebar">
+            <a href="home.php" class="w-100">
                 <button type="button" class="btn btn-outline-primary w-100 user-info d-flex align-items-center text-white mb-3">
                     <i class="bi bi-person-circle me-2"></i>Aming
                 </button>
+            </a>
+
 
                 <!-- Guru dan Anak Dropdown -->
                 <div class="dropdown">
