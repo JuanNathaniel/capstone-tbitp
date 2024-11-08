@@ -158,11 +158,6 @@
                     <div class="d-flex justify-content-between mb-3">
                         <div class="d-flex align-items-center">
                             <button class="btn btn-primary me-2" onclick="window.location.href='create_daftar_hadir_guru.php'">Create</button>
-                            <form action="daftar_hadir_guru.php" method="GET" class="d-flex align-items-center">
-                                <label for="filter_date" class="form-label me-2 mb-0">&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                                <input type="date" name="filter_date" id="filter_date" class="form-control me-2" value="<?php echo isset($_GET['filter_date']) ? $_GET['filter_date'] : ''; ?>">
-                                <button type="submit" class="btn btn-primary" id="searchBtn">Search</button>
-                            </form>
                         </div>
                     </div>
                 </div>
