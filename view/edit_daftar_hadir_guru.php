@@ -23,7 +23,7 @@ $tanggal = $_POST['tanggal'];
 
 // Query untuk update data
 $sql = "UPDATE daftar_hadir_guru 
-        SET id_guru = ?, jam_datang = ?, jam_pulang = ?, ket = ?, date = ? 
+        SET id_guru = ?, jam_datang = ?, jam_pulang = ?, keterangan = ?, date = ? 
         WHERE id_daftarhadirguru = ?";
 
 $stmt = $conn->prepare($sql);

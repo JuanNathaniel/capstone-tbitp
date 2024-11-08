@@ -129,7 +129,7 @@
 
     // Query untuk mengambil data
     $sql = "SELECT guru.id_guru, guru.nama, daftar_hadir_guru.id_daftarhadirguru, daftar_hadir_guru.jam_datang, daftar_hadir_guru.jam_pulang, 
-            daftar_hadir_guru.tanda_tangan1, daftar_hadir_guru.date, daftar_hadir_guru.ket
+            daftar_hadir_guru.tanda_tangan1, daftar_hadir_guru.date, daftar_hadir_guru.keterangan
             FROM daftar_hadir_guru
             JOIN guru ON guru.id_guru = daftar_hadir_guru.id_guru
             ORDER BY daftar_hadir_guru.date"; // Urutkan berdasarkan tanggal
@@ -191,7 +191,7 @@
                                 echo "<td>" . $row["nama"] . "</td>";
                                 echo "<td>" . $row["jam_datang"] . "</td>";
                                 echo "<td>" . $row["jam_pulang"] . "</td>";
-                                echo "<td>" . $row["ket"] . "</td>";
+                                echo "<td>" . $row["keterangan"] . "</td>";
                                 echo "<td>" . $row["tanda_tangan1"] . "</td>";
                                 echo "<td>
                                     <button class='btn btn-warning' 
@@ -202,7 +202,7 @@
                                         data-nama='{$row['nama']}'
                                         data-jam-datang='{$row['jam_datang']}'
                                         data-jam-pulang='{$row['jam_pulang']}'
-                                        data-keterangan='{$row['ket']}'
+                                        data-keterangan='{$row['keterangan']}'
                                         data-tanggal='{$row['date']}'>Edit</button>&nbsp;&nbsp;
                                     <button class='btn btn-danger delete-btn' data-id='{$row['id_daftarhadirguru']}'>Delete</button>
                                 </td>";

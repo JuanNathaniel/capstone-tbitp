@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Semua field harus diisi.";
     } else {
         // Query untuk menyimpan data ke dalam tabel daftar_hadir_guru
-        $sql = "INSERT INTO daftar_hadir_guru (id_guru, jam_datang, jam_pulang, ket, tanda_tangan1, date) 
+        $sql = "INSERT INTO daftar_hadir_guru (id_guru, jam_datang, jam_pulang, keterangan, tanda_tangan1, date) 
                 VALUES ('$id_guru', '$jam_datang', '$jam_pulang', '$keterangan', '$tanda_tangan', '$tanggal')";
 
         if ($conn->query($sql) === TRUE) {
