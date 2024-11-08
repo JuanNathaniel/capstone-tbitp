@@ -153,7 +153,7 @@
 
             <!-- Konten Utama -->
             <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
-                <h2 class="bg-info rounded p-4 text-white transition-bg">Daftar hadir guru</h2>
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Daftar Hadir Guru</h2>
                 <div class="content">
                     <div class="d-flex justify-content-between mb-3">
                         <div class="d-flex align-items-center">

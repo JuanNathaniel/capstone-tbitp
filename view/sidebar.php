@@ -91,7 +91,7 @@
                             <li><a id="absensi" class="dropdown-item text-decoration-none" href="absendanpenjemputan.php"><i class="bi bi-calendar-check me-2"></i> Absensi Datang dan Jemput</a></li>
                             <li><a id="daftarHadirGuru" class="dropdown-item text-decoration-none" href="daftar_hadir_guru.php"><i class="bi bi-card-list me-2"></i> Daftar Hadir Guru</a></li>
                             <li><a id="aturanPenjemputan" class="dropdown-item text-decoration-none" href="aturanPenjemputan.php"><i class="bi bi-shield-lock me-2"></i> Aturan Penjemputan</a></li>
-                            <li><a id="bukuIndukPesertaDidik" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-book me-2"></i> Buku Induk Peserta Didik</a></li>
+                            <li><a id="bukuIndukPesertaDidik" class="dropdown-item text-decoration-none" href="buku_induk_peserta_didik.php"><i class="bi bi-book me-2"></i> Buku Induk Peserta Didik</a></li>
                         </ul>
                     </div>
                 </div>

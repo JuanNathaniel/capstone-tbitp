@@ -61,6 +61,10 @@
         .logout:hover {
             color: grey;
         }
+
+        .transition-bg {
+            background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
+        }
     </style>
 </head>
 
@@ -135,10 +139,11 @@
             <?php include 'sidebar.php'; ?>
 
             <!-- Konten Utama -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+            <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Absensi Datang dan Jemput</h2>
                 <div class="container-fluid">
                     <div class="header d-flex justify-content-between align-items-center">
-                        <h2>Absensi Datang dan Jemput</h2>
+                        <!-- <h2>Absensi Datang dan Jemput</h2> -->
                         <!-- Tombol Create -->
                         <a href="absendanPenjemputan-create.php" class="btn btn-primary">Create</a>
                     </div>

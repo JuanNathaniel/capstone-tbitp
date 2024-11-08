@@ -17,7 +17,7 @@ if ($conn->connect_error) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil data dari form
-    $id_dataanak = $_POST['id_dataanak']; // ID yang akan diupdate
+    $id = $_POST['id']; // ID yang akan diupdate
     $no_induk = $_POST['no_induk'];
     $nisn = $_POST['nisn'];
     $nama = $_POST['nama'];
@@ -55,14 +55,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     nama_lengkap = '$nama',
                     nisn = '$nisn',
                     dokumen = '$dokumen_baru'
-                WHERE id_dataanak = '$id_dataanak'";
+                WHERE id = '$id'";
     } else {
         // Jika tidak ada file baru, update data tanpa mengganti dokumen
         $sql = "UPDATE data_anak SET 
                     no_induk = '$no_induk',
                     nama_lengkap = '$nama',
                     nisn = '$nisn'
-                WHERE id_dataanak = '$id_dataanak'";
+                WHERE id = '$id'";
     }
 
     // Menjalankan query

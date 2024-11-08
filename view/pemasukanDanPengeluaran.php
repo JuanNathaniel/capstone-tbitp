@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pemasukan dan Pengeluaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .transition-bg {
+            background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
+        }
+    </style>
 </head>
 
 <body>
@@ -12,9 +17,10 @@
         <div class="row">
             <?php include 'sidebar.php'; ?> <!-- Include file sidebar -->
             
+            <!--main utama-->
             <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Aturan Penjemputan</h2>
                 <div class="container mt-5">
-                    <h2 class="text-center mb-4">Pemasukan dan Pengeluaran</h2>
 
                     <!-- Tombol Tambah Data -->
                     <div class="mb-3">

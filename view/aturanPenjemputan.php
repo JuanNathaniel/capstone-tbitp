@@ -52,6 +52,9 @@
         .logout:hover {
             color: grey;
         }
+        .transition-bg {
+            background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
+        }
     </style>
 </head>
 
@@ -61,9 +64,9 @@
         <?php include 'sidebar.php'; ?> <!-- Include file sidebar -->
 
             <!-- Konten Utama -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+            <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Aturan Penjemputan</h2>
                 <div class="container-fluid">
-                    <h2 class="text-center mb-4">Aturan Penjemputan</h2>
                     <table class="table table-bordered table-striped">
                         <thead class="thead-dark">
                             <tr>

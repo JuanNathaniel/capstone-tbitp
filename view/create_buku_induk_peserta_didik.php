@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($conn->query($sql) === TRUE) {
                 // Jika berhasil disimpan, beri feedback sukses
                 $_SESSION['status'] = 'success'; // Untuk menampilkan SweetAlert
-                header("Location: home.php"); // Redirect kembali ke halaman utama
+                header("Location: buku_induk_peserta_didik.php"); // Redirect kembali ke halaman utama
                 exit;
             } else {
                 echo "Error: " . $sql . "<br>" . $conn->error;

@@ -143,7 +143,7 @@
     }
 
     // Query untuk mengambil data
-    $sql = "SELECT id_dataanak, id_anak, no_induk, nisn, nama_lengkap, dokumen FROM `data_anak`";
+    $sql = "SELECT id, id_anak, no_induk, nisn, nama_lengkap, dokumen FROM `data_anak`";
 
     $result = $conn->query($sql);
 
@@ -167,7 +167,7 @@
 
             <!-- Konten Utama -->
             <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
-                <h2 class="bg-info rounded p-4 text-white transition-bg">Buku induk peserta didik</h2>
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Buku Induk Peserta Didik</h2>
                 <div class="content">
                     <div class="d-flex justify-content-between mb-3">
                         <div class="d-flex align-items-center">
@@ -210,12 +210,12 @@
                                     <button class='btn btn-warning edit-btn' 
                                         data-bs-toggle='modal' 
                                         data-bs-target='#editModal' 
-                                        data-id='{$row['id_dataanak']}'
+                                        data-id='{$row['id']}'
                                         data-no-induk='{$row['no_induk']}'
                                         data-nisn='{$row['nisn']}'
                                         data-nama='{$row['nama_lengkap']}'
                                         data-dokumen='{$row['dokumen']}'>Edit</button>&nbsp;&nbsp;
-                                    <button class='btn btn-danger delete-btn' data-id='{$row['id_dataanak']}'>Delete</button>
+                                    <button class='btn btn-danger delete-btn' data-id='{$row['id']}'>Delete</button>
                                 </td>";
                                 echo "</tr>";
                                 $no++;
@@ -237,7 +237,7 @@
                 </div>
                 <div class="modal-body">
                     <form action="edit_buku_induk_peserta_didik.php" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" id="edit_id" name="id_dataanak">
+                        <input type="hidden" id="edit_id" name="id">
                         
                         <div class="mb-3">
                             <label for="edit_no_induk" class="form-label">Nomor Induk</label>
@@ -400,7 +400,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Jika user memilih Yes, lakukan penghapusan
-                        window.location.href = 'delete_buku_induk_peserta_didik.php?id_dataanak=' + idToDelete;
+                        window.location.href = 'delete_buku_induk_peserta_didik.php?id=' + idToDelete;
                     }
                 });
             });

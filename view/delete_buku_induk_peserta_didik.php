@@ -14,13 +14,13 @@ if ($conn->connect_error) {
 }
 
 // Ambil ID yang dikirimkan melalui GET
-$id_dataanak = $_GET['id_dataanak'];
+$id = $_GET['id'];
 
 // Query untuk menghapus data
-$sql = "DELETE FROM data_anak WHERE id_dataanak = ?";
+$sql = "DELETE FROM data_anak WHERE id = ?";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id_dataanak);
+$stmt->bind_param("i", $id);
 
 if ($stmt->execute()) {
     // Jika berhasil, arahkan kembali ke halaman utama dengan parameter status success
