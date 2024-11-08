@@ -58,35 +58,7 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 sidebar" id="sidebar">
-                <button type="button" class="btn btn-outline-primary w-100 user-info d-flex align-items-center text-white mb-3">
-                    <i class="bi bi-person-circle me-2"></i>Aming
-                </button>
-
-                <div class="dropdown">
-                    <a class="dropdown-toggle text-decoration-none" href="#" role="button">Guru dan Anak</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item text-decoration-none" href="#">Absensi Datang dan Jemput</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Daftar Hadir Guru</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Aturan Penjemputan</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Buku Induk Peserta Didik</a></li>
-                    </ul>
-                </div>
-                <div class="dropdown mt-3">
-                    <a class="dropdown-toggle text-decoration-none" href="#" role="button">Keuangan</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item text-decoration-none" href="#">Pemasukan dan Pengeluaran</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Rencana Kegiatan Anggaran</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Rincian Biaya Pendidikan</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Laporan Dana</a></li>
-                        <li><a class="dropdown-item text-decoration-none" href="#">Rekapitulasi Pembayaran</a></li>
-                    </ul>
-                </div>
-                <button type="button" class="btn btn-outline-primary w-100 logout d-flex align-items-center">
-                    <i class="bi bi-box-arrow-left me-2"></i>Logout
-                </button>
-            </nav>
+        <?php include 'sidebar.php'; ?> <!-- Include file sidebar -->
 
             <!-- Konten Utama -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
