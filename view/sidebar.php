@@ -123,10 +123,17 @@
                     </a>
                     <div class="collapse" id="pembelajaranDropdown">
                         <ul class="list-unstyled ms-3">
+<<<<<<< Updated upstream
                             <li><a id="jadwalTematikDanKegiatan" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-calendar3 me-2"></i> Jadwal Tematik dan Kegiatan</a></li>
                             <li><a id="laporanPerkembangan" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-bar-chart-line me-2"></i> Laporan Perkembangan</a></li>
                             <li><a id="formulirTumbuhKembang" class="dropdown-item text-decoration-none" href="formulir_deteksi_tumbuh_kembang.php"><i class="bi bi-file-earmark-medical me-2"></i> Formulir Tumbuh Kembang</a></li>
                             <li><a id="dataKurikulumMerdeka" class="dropdown-item text-decoration-none" href="data_kurikulum_merdeka.php"><i class="bi bi-journal-bookmark-fill me-2"></i> Data Kurikulum Merdeka</a></li>
+=======
+                            <li><a id="jadwalTematikDanKegiatan" class="dropdown-item text-decoration-none" href="jadwal_tematik.php"><i class="bi bi-calendar3 me-2"></i> Jadwal Tematik dan Kegiatan</a></li>
+                            <li><a id="laporanPerkembangan" class="dropdown-item text-decoration-none" href="laporan_pertumbuhan_anak.php"><i class="bi bi-bar-chart-line me-2"></i> Laporan Perkembangan</a></li>
+                            <li><a id="formulirTumbuhKembang" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-file-earmark-medical me-2"></i> Formulir Tumbuh Kembang</a></li>
+                            <li><a id="dataKurikulumMerdeka" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-journal-bookmark-fill me-2"></i> Data Kurikulum Merdeka</a></li>
+>>>>>>> Stashed changes
                         </ul>
                     </div>
                 </div>

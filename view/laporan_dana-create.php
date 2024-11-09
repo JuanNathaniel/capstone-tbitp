@@ -38,9 +38,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Input Laporan Dana</h2>
-        
+
+<div class="container-fluid">
+        <div class="row">
+            <?php include 'sidebar.php'; ?> <!-- Include file sidebar -->
+
+            <!-- Konten Utama -->
+            <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Input Laporan Dana</h2>
+
+
         <!-- Form Input Data -->
         <form action="laporan_dana-create.php" method="POST">
             <div class="mb-3">

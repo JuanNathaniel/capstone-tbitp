@@ -71,8 +71,14 @@ if (isset($_GET['delete']) && isset($_GET['tahun_ajaran'])) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Rincian Biaya Pendidikan</h2>
+
+<div class="container-fluid">
+        <div class="row">
+            <?php include 'sidebar.php'; ?> <!-- Include file sidebar -->
+
+            <!-- Konten Utama -->
+            <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Rincian Biaya Pendidikan</h2>
 
         <!-- Input Tahun Ajaran -->
         <form method="POST" action="biaya_pendidikan.php" class="mb-4" id="tahunForm">
