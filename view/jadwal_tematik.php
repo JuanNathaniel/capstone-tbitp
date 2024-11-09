@@ -89,8 +89,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<div class="container">
-    <h2>Jadwal Tematik</h2>
+
+<div class="container-fluid">
+        <div class="row">
+            <?php include 'sidebar.php'; ?> <!-- Include file sidebar -->
+
+            <!-- Konten Utama -->
+            <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Jadwal Tematik</h2>
+
 
     <!-- Button untuk Create, Update, dan Delete Tema -->
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTemaModal">Create Tema</button>

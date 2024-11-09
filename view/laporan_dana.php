@@ -63,8 +63,15 @@ $total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_
 </head>
 <body>
 
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Tabel Laporan Dana</h2>
+<div class="container-fluid">
+        <div class="row">
+            <?php include 'sidebar.php'; ?> <!-- Include file sidebar -->
+
+            <!-- Konten Utama -->
+            <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Tabel Laporan Dana</h2>
+
+
         
         <a href="laporan_dana-create.php" class="btn btn-success mb-4">Tambah Data</a>
         
