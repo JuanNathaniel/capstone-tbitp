@@ -8,65 +8,6 @@
     <link href="../scss/custom.scss" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Styling Sidebar */
-        .sidebar {
-            background-color: #333;
-            padding-top: 20px;
-            height: 100vh;
-        }
-
-        .btn-outline-primary {
-            color: white;
-            border-color: white;
-        }
-
-        .btn-outline-primary:hover {
-            color: grey;
-            border-color: grey;
-        }
-
-        .dropdown-toggle {
-            color: white;
-            cursor: pointer;
-        }
-
-        /* Styling dropdown agar tidak hilang */
-        .dropdown-menu {
-            padding: 0;
-            background-color: #333;
-            font-size: 14px;
-        }
-
-        .dropdown-item {
-            color: white;
-            padding: 8px 16px;
-            
-        }
-
-        /* Warna berubah saat dropdown item ditekan */
-        .dropdown-item:active, .dropdown-item:focus {
-            background-color: #133E87; /* Sesuaikan warna yang diinginkan */
-            color: #fff; /* Sesuaikan warna teks jika perlu */
-            outline: none; /* Menghilangkan border fokus default */
-        }
-
-        .dropdown-item:hover {
-            background-color: #133E87;
-        }
-
-        /* Logout button styling */
-        .logout {
-            color: white;
-            margin-top: 10px;
-        }
-
-        .logout:hover {
-            color: white;
-        }
-
-        .list-unstyled {
-            font-size: 13px;
-        }
     </style>
 </head>
 

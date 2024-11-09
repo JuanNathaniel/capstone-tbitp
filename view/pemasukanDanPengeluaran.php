@@ -19,7 +19,7 @@
             
             <!--main utama-->
             <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
-                <h2 class="bg-info rounded p-4 text-white transition-bg">Aturan Penjemputan</h2>
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Pemasukan dan Pengeluaran</h2>
                 <div class="container mt-5">
 
                     <!-- Tombol Tambah Data -->
