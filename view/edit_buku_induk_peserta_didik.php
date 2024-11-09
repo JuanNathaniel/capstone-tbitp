@@ -23,6 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nama = $_POST['nama'];
     $dokumen_baru = ""; // Menyimpan nama file baru
 
+    // Query untuk mengambil nama file lama dari database
+    $sql_get_file = "SELECT dokumen FROM data_anak WHERE id = '$id'";
+    $result = $conn->query($sql_get_file);
+    $row = $result->fetch_assoc();
+    $oldFileName = $row['dokumen']; // Nama file lama
+
     // Cek apakah ada file baru yang diupload
     if (isset($_FILES['file_upload']) && $_FILES['file_upload']['error'] == 0) {
         // Ambil informasi file
@@ -36,11 +42,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Nama file baru dengan menambahkan timestamp untuk mencegah duplikasi
         $dokumen_baru = uniqid('', true) . '.' . $fileExt;
-        $uploadDir = '../uploads/';
+        $uploadDir = '../uploads/bukuinduk/';
 
         // Pindahkan file ke folder uploads
         if (move_uploaded_file($fileTmpName, $uploadDir . $dokumen_baru)) {
-            // File berhasil diupload
+            // Jika ada file lama, hapus file lama
+            if (!empty($oldFileName)) {
+                $oldFilePath = $uploadDir . $oldFileName;
+                if (file_exists($oldFilePath)) {
+                    unlink($oldFilePath); // Menghapus file lama
+                }
+            }
         } else {
             echo "Gagal meng-upload file.";
             exit;

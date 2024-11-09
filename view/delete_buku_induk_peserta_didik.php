@@ -16,21 +16,40 @@ if ($conn->connect_error) {
 // Ambil ID yang dikirimkan melalui GET
 $id = $_GET['id'];
 
-// Query untuk menghapus data
-$sql = "DELETE FROM data_anak WHERE id = ?";
+// Query untuk mendapatkan nama file berdasarkan ID
+$fileQuery = "SELECT dokumen FROM data_anak WHERE id = ?";
+$fileStmt = $conn->prepare($fileQuery);
+$fileStmt->bind_param("i", $id);
+$fileStmt->execute();
+$fileResult = $fileStmt->get_result();
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id);
+if ($fileResult->num_rows > 0) {
+    $fileRow = $fileResult->fetch_assoc();
+    $filePath = '../uploads/bukuinduk/' . $fileRow['dokumen'];
 
-if ($stmt->execute()) {
-    // Jika berhasil, arahkan kembali ke halaman utama dengan parameter status success
-    header("Location: buku_induk_peserta_didik.php?status=deleted");
-    exit;
+    // Hapus file jika ada di server
+    if (file_exists($filePath)) {
+        unlink($filePath);
+    }
+
+    // Setelah file dihapus, hapus data di database
+    $deleteQuery = "DELETE FROM data_anak WHERE id = ?";
+    $deleteStmt = $conn->prepare($deleteQuery);
+    $deleteStmt->bind_param("i", $id);
+
+    if ($deleteStmt->execute()) {
+        header("Location: buku_induk_peserta_didik.php?status=deleted");
+        exit;
+    } else {
+        echo "Error: " . $deleteStmt->error;
+    }
+
+    $deleteStmt->close();
 } else {
-    // Jika gagal
-    echo "Error: " . $stmt->error;
+    header("Location: buku_induk_peserta_didik.php?status=notfound");
+    exit;
 }
 
-$stmt->close();
+$fileStmt->close();
 $conn->close();
 ?>

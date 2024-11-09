@@ -150,7 +150,7 @@
     ?>
     <?php
     // Nama directory tempat file akan disimpan
-    $uploadDir = '../uploads/';
+    $uploadDir = '../uploads/bukuinduk/';
 
     // Cek apakah directory sudah ada
     if (!is_dir($uploadDir)) {
@@ -197,8 +197,8 @@
                                 echo "<td>" . $row["no_induk"] . "</td>";
                                 echo "<td>" . $row["nisn"] . "</td>";
                                 echo "<td>" . $row["nama_lengkap"] . "</td>";
-                                // Pastikan Anda memiliki directory tempat file disimpan, misalnya 'uploads/'
-                                $filePath = '../uploads/' . $row["dokumen"];
+                                // Pastikan Anda memiliki directory tempat file disimpan, misalnya 'uploads/bukuinduk/'
+                                $filePath = '../uploads/bukuinduk/' . $row["dokumen"];
 
                                 // Periksa apakah file tersedia, jika ya, tampilkan link, jika tidak tampilkan pesan
                                 if (file_exists($filePath) && !empty($row["dokumen"])) {
@@ -326,7 +326,7 @@
             $newFileName = uniqid('', true) . '.' . $fileExt;
 
             // Lokasi folder tempat file akan disimpan
-            $uploadDir = '../uploads/';
+            $uploadDir = '../uploads/bukuinduk/';
 
             // Memindahkan file ke folder upload
             if (move_uploaded_file($fileTmpName, $uploadDir . $newFileName)) {
