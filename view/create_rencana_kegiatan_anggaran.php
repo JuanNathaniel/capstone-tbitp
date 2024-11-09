@@ -42,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Memindahkan file ke folder upload
         if (move_uploaded_file($fileTmpName, $uploadDir . $newFileName)) {
             // Simpan data ke database, termasuk nama file yang telah diubah dan status
-            $sql = "INSERT INTO rencana_kegiatan_anggaran (nama_dokumen, tahun_anggaran, keterangan, pengumpulan_dokumen, status) 
-                    VALUES ('$nama_dokumen', '$tahun_anggaran', '$keterangan', '$newFileName', '$status')";
+            $sql = "INSERT INTO rencana_kegiatan_anggaran (id_admin, nama_dokumen, tahun_anggaran, keterangan, pengumpulan_dokumen, status) 
+                    VALUES (1, '$nama_dokumen', '$tahun_anggaran', '$keterangan', '$newFileName', '$status')";
             
             if ($conn->query($sql) === TRUE) {
                 // Jika berhasil disimpan, beri feedback sukses
@@ -58,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else {
         // Jika tidak ada file di-upload, simpan data tanpa file
-        $sql = "INSERT INTO rencana_kegiatan_anggaran (nama_dokumen, tahun_anggaran, keterangan, status) 
-                VALUES ('$nama_dokumen', '$tahun_anggaran', '$keterangan', '$status')";
+        $sql = "INSERT INTO rencana_kegiatan_anggaran (id_admin, nama_dokumen, tahun_anggaran, keterangan, status) 
+                VALUES (1, '$nama_dokumen', '$tahun_anggaran', '$keterangan', '$status')";
         
         if ($conn->query($sql) === TRUE) {
             $_SESSION['status'] = 'success2'; // Untuk menampilkan SweetAlert
