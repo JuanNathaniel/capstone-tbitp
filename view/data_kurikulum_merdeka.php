@@ -143,14 +143,14 @@
     }
 
     // Query untuk mengambil data
-    $sql = "SELECT * FROM `formulir_deteksi_tumbuh_kembang`";
+    $sql = "SELECT * FROM `data_kurikulum_merdeka`";
 
     $result = $conn->query($sql);
 
     ?>
     <?php
     // Nama directory tempat file akan disimpan
-    $uploadDir = '../uploads/formulir_deteksi_dan_tumbuh_kembang/';
+    $uploadDir = '../uploads/data_kurikulum_merdeka/';
 
     // Cek apakah directory sudah ada
     if (!is_dir($uploadDir)) {
@@ -167,7 +167,7 @@
 
             <!-- Konten Utama -->
             <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
-                <h2 class="bg-info rounded p-4 text-white transition-bg">Formulir Deteksi dan Tumbuh Kembang</h2>
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Data Kurikulum Merdeka</h2>
                 <div class="content">
                     <div class="d-flex justify-content-between mb-3">
                         <div class="d-flex align-items-center">
@@ -181,7 +181,7 @@
                     <thead>
                         <tr>
                             <th scope="col">NO</th>
-                            <th scope="col">NAMA SISWA</th>
+                            <th scope="col">NAMA DOKUMEN</th>
                             <th scope="col">TAHUN PELAJARAN</th>
                             <th scope="col">PENGUMPULAN DOKUMEN</th>
                             <th scope="col">KETERANGAN</th>
@@ -194,10 +194,10 @@
                             foreach ($result as $row) :
                                 echo "<tr>";
                                 echo "<td scope='row'>" . $no . "</td>";
-                                echo "<td>" . $row["nama_siswa"] . "</td>";
+                                echo "<td>" . $row["nama_dokumen"] . "</td>";
                                 echo "<td>" . $row["tahun_pelajaran"] . "</td>";
                                 // Pastikan Anda memiliki directory tempat file disimpan, misalnya 'uploads/bukuinduk/'
-                                $filePath = '../uploads/formulir_deteksi_dan_tumbuh_kembang/' . $row["pengumpulan_dokumen"];
+                                $filePath = '../uploads/data_kurikulum_merdeka/' . $row["pengumpulan_dokumen"];
 
                                 // Periksa apakah file tersedia, jika ya, tampilkan link, jika tidak tampilkan pesan
                                 if (file_exists($filePath) && !empty($row["pengumpulan_dokumen"])) {
@@ -212,7 +212,7 @@
                                         data-bs-toggle='modal' 
                                         data-bs-target='#editModal' 
                                         data-id='{$row['id']}'
-                                        data-nama-siswa='{$row['nama_siswa']}'
+                                        data-nama-dokumen='{$row['nama_dokumen']}'
                                         data-tahun-pelajaran='{$row['tahun_pelajaran']}'
                                         data-pengumpulan_dokumen='{$row['pengumpulan_dokumen']}'
                                         data-keterangan='{$row['keterangan']}'>Edit</button>&nbsp;&nbsp;
@@ -228,21 +228,21 @@
         </div>
     </div>
 
-    <!-- Modal Edit formulir tumbuh kembang -->
+    <!-- Modal Edit Data Kurikulum Merdeka -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Formulir Deteksi dan Tumbuh Kembang</h5>
+                    <h5 class="modal-title" id="editModalLabel">Edit Data Kurikulum Merdeka</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="edit_formulir_deteksi_tumbuh_kembang.php" method="POST" enctype="multipart/form-data">
+                    <form action="edit_data_kurikulum_merdeka.php" method="POST" enctype="multipart/form-data">
                         <input type="hidden" id="edit_id" name="id">
                         
                         <div class="mb-3">
-                            <label for="edit_nama_siswa" class="form-label">Nama Siswa</label>
-                            <input type="text" class="form-control" id="edit_nama_siswa" name="nama_siswa" required>
+                            <label for="edit_nama_dokumen" class="form-label">Nama Dokumen</label>
+                            <input type="text" class="form-control" id="edit_nama_dokumen" name="nama_dokumen" required>
                         </div>
 
                         <div class="mb-3">
@@ -270,7 +270,7 @@
         </div>
     </div>
 
-    <!-- Modal Create Deteksi dan tumbuh kembang -->
+    <!-- Modal Create Data Kurikulum Merdeka -->
     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -279,15 +279,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="create_formulir_deteksi_tumbuh_kembang.php" method="POST" enctype="multipart/form-data">
+                    <form action="create_data_kurikulum_merdeka.php" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="file_upload" class="form-label">Attachment</label>
                             <input type="file" class="form-control" id="file_upload" name="file_upload">
                         </div>
 
                         <div class="mb-3">
-                            <label for="nama_siswa" class="form-label">Nama Siswa</label>
-                            <input type="text" class="form-control" id="nama_siswa" name="nama_siswa" required>
+                            <label for="nama_dokumen" class="form-label">Nama Dokumen</label>
+                            <input type="text" class="form-control" id="nama_dokumen" name="nama_dokumen" required>
                         </div>
 
                         <div class="mb-3">
@@ -327,13 +327,13 @@
             $newFileName = uniqid('', true) . '.' . $fileExt;
 
             // Lokasi folder tempat file akan disimpan
-            $uploadDir = '../uploads/formulir_deteksi_dan_tumbuh_kembang/';
+            $uploadDir = '../uploads/data_kurikulum_merdeka/';
 
             // Memindahkan file ke folder upload
             if (move_uploaded_file($fileTmpName, $uploadDir . $newFileName)) {
 
                 // Menyimpan nama file yang sudah diganti ke database
-                $sql = "INSERT INTO formulir_deteksi_tumbuh_kembang (pengumpulan_dokumen) VALUES ('$newFileName')";
+                $sql = "INSERT INTO data_kurikulum_merdeka (pengumpulan_dokumen) VALUES ('$newFileName')";
 
                 if ($conn->query($sql) === TRUE) {
                     echo "File berhasil di-upload dan nama file disimpan ke database!";
@@ -362,14 +362,14 @@
                 const idToEdit = this.getAttribute('data-id'); // ID yang akan diedit
 
                 // Ambil data dari atribut data-* yang ada pada tombol
-                const namaSiswa = this.getAttribute('data-nama-siswa');
+                const namaDokumen = this.getAttribute('data-nama-dokumen');
                 const tahunPelajaran = this.getAttribute('data-tahun-pelajaran');
                 const keterangan = this.getAttribute('data-keterangan');
                 const dokumen = this.getAttribute('data-pengumpulan-dokumen');
 
                 // Isi modal dengan data yang didapat
                 document.getElementById('edit_id').value = idToEdit;
-                document.getElementById('edit_nama_siswa').value = namaSiswa;
+                document.getElementById('edit_nama_dokumen').value = namaDokumen;
                 document.getElementById('edit_tahun_pelajaran').value = tahunPelajaran;
                 document.getElementById('edit_keterangan').value = keterangan;
                 document.getElementById('edit_pengumpulan_dokumen').value = dokumen;  // Jika ada dokumen
@@ -400,7 +400,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Jika user memilih Yes, lakukan penghapusan
-                        window.location.href = 'delete_formulir_deteksi_tumbuh_kembang.php?id=' + idToDelete;
+                        window.location.href = 'delete_data_kurikulum_merdeka.php?id=' + idToDelete;
                     }
                 });
             });
