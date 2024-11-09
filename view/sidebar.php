@@ -105,8 +105,8 @@
                         <ul class="list-unstyled ms-3">
                             <li><a id="pemasukanPengeluaran" class="dropdown-item text-decoration-none" href="pemasukandanpengeluaran.php"><i class="bi bi-arrow-down-circle me-2"></i> Pemasukan dan Pengeluaran</a></li>
                             <li><a id="rencanaKegiatanAnggaran" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-journal me-2"></i> Rencana Kegiatan Anggaran</a></li>
-                            <li><a id="rincianBiayaPendidikan" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-calculator me-2"></i> Rincian Biaya Pendidikan</a></li>
-                            <li><a id="laporanDana" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-file-earmark-bar-graph me-2"></i> Laporan Dana</a></li>
+                            <li><a id="rincianBiayaPendidikan" class="dropdown-item text-decoration-none" href="biaya_pendidikan.php"><i class="bi bi-calculator me-2"></i> Rincian Biaya Pendidikan</a></li>
+                            <li><a id="laporanDana" class="dropdown-item text-decoration-none" href="laporan_dana.php"><i class="bi bi-file-earmark-bar-graph me-2"></i> Laporan Dana</a></li>
                             <li><a id="rekapitulasiPembayaran" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-receipt me-2"></i> Rekapitulasi Pembayaran</a></li>
                         </ul>
                     </div>
