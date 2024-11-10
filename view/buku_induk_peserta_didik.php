@@ -90,9 +90,10 @@
 
     // Query untuk mengambil data
     $sql = "SELECT id, id_anak, no_induk, nisn, nama_lengkap, dokumen FROM `data_anak`";
+    $query_siswa = "SELECT id, nama FROM anak";
 
     $result = $conn->query($sql);
-
+    $result_siswa = $conn->query($query_siswa);
     ?>
     <?php
     // Nama directory tempat file akan disimpan
@@ -185,6 +186,27 @@
                     <form action="edit_buku_induk_peserta_didik.php" method="POST" enctype="multipart/form-data">
                         <input type="hidden" id="edit_id" name="id">
                         
+                        <!-- Dropdown Nama Siswa -->
+                        <div class="mb-3">
+                            <label for="id_siswa" class="form-label">Nama Siswa</label>
+                            <?php if ($result_siswa->num_rows > 0): ?>
+                                <select id="id_siswa" name="id_siswa" class="form-select" required>
+                                    <option value="" disabled selected hidden>Pilih Nama Siswa</option>
+                                    <?php
+                                    // Menampilkan nama siswa sebagai opsi dalam dropdown
+                                    while ($row = $result_siswa->fetch_assoc()) {
+                                        echo "<option value='" . $row['id'] . "'>" . $row['nama'] . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            <?php else: ?>
+                                <p class="text-danger">Tidak ada data siswa tersedia.</p>
+                                <select id="id_siswa" name="id_siswa" class="form-select" disabled>
+                                    <option value="">Tidak ada siswa</option>
+                                </select>
+                            <?php endif; ?>
+                        </div>
+
                         <div class="mb-3">
                             <label for="edit_no_induk" class="form-label">Nomor Induk</label>
                             <input type="text" class="form-control" id="edit_no_induk" name="no_induk" required>
@@ -193,11 +215,6 @@
                         <div class="mb-3">
                             <label for="edit_nisn" class="form-label">NISN</label>
                             <input type="text" class="form-control" id="edit_nisn" name="nisn" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="edit_nama" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="edit_nama" name="nama" required>
                         </div>
 
                         <div class="mb-3">
@@ -225,6 +242,27 @@
                 </div>
                 <div class="modal-body">
                     <form action="create_buku_induk_peserta_didik.php" method="POST" enctype="multipart/form-data">
+                        <!-- Dropdown Nama Siswa -->
+                        <div class="mb-3">
+                            <label for="id_siswa" class="form-label">Nama Siswa</label>
+                            <?php if ($result_siswa->num_rows > 0): ?>
+                                <select id="id_siswa" name="id_siswa" class="form-select" required>
+                                    <option value="" disabled selected hidden>Pilih Nama Siswa</option>
+                                    <?php
+                                    // Menampilkan nama siswa sebagai opsi dalam dropdown
+                                    while ($row = $result_siswa->fetch_assoc()) {
+                                        echo "<option value='" . $row['id'] . "'>" . $row['nama'] . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            <?php else: ?>
+                                <p class="text-danger">Tidak ada data siswa tersedia.</p>
+                                <select id="id_siswa" name="id_siswa" class="form-select" disabled>
+                                    <option value="">Tidak ada siswa</option>
+                                </select>
+                            <?php endif; ?>
+                        </div>
+
                         <div class="mb-3">
                             <label for="no_induk" class="form-label">Nomor Induk</label>
                             <input type="text" class="form-control" id="no_induk" name="no_induk" required>
@@ -233,11 +271,6 @@
                         <div class="mb-3">
                             <label for="nisn" class="form-label">NISN</label>
                             <input type="text" class="form-control" id="nisn" name="nisn" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="nama" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="nama" name="nama" required>
                         </div>
 
                         <div class="mb-3">
@@ -310,22 +343,33 @@
                 const namaAnak = this.getAttribute('data-nama');
                 const noInduk = this.getAttribute('data-no-induk');
                 const nisn = this.getAttribute('data-nisn');
-                const tanggal = this.getAttribute('data-tanggal');
                 const dokumen = this.getAttribute('data-dokumen');
 
                 // Isi modal dengan data yang didapat
                 document.getElementById('edit_id').value = idToEdit;
                 document.getElementById('edit_no_induk').value = noInduk;
-                document.getElementById('edit_nama').value = namaAnak;
                 document.getElementById('edit_nisn').value = nisn;
-                document.getElementById('edit_dokumen').value = dokumen;  // Jika ada dokumen
+                
+                // Update dropdown Nama Siswa agar terpilih sesuai data yang ada
+                const idSiswaDropdown = document.getElementById('id_siswa');
+                const options = idSiswaDropdown.getElementsByTagName('option');
+                for (let option of options) {
+                    if (option.value == idToEdit) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+
+                // Update nilai dokumen jika ada (optional, tergantung apakah Anda ingin menampilkannya)
+                if (dokumen) {
+                    document.getElementById('edit_dokumen').value = dokumen;
+                }
 
                 // Tampilkan modal
                 const myModal = new bootstrap.Modal(document.getElementById('editModal'));
                 myModal.show();
             });
         });
-
 
         // Menangani ketika tombol delete ditekan
         const deleteButtons = document.querySelectorAll('.delete-btn');

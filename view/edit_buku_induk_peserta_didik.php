@@ -18,10 +18,19 @@ if ($conn->connect_error) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil data dari form
     $id = $_POST['id']; // ID yang akan diupdate
+    $id_siswa = $_POST['id_siswa']; // ID siswa yang dipilih dari dropdown
     $no_induk = $_POST['no_induk'];
     $nisn = $_POST['nisn'];
-    $nama = $_POST['nama'];
     $dokumen_baru = ""; // Menyimpan nama file baru
+
+    // Query untuk mengambil data nama lengkap siswa berdasarkan ID yang dipilih
+    $siswaDetailQuery = "SELECT nama FROM anak WHERE id = ?";
+    $stmt = $conn->prepare($siswaDetailQuery);
+    $stmt->bind_param("i", $id_siswa);
+    $stmt->execute();
+    $siswaResult = $stmt->get_result();
+    $siswaData = $siswaResult->fetch_assoc(); // Mengambil data sebagai array asosiatif
+    $nama = $siswaData['nama']; // Ambil nilai nama dari array
 
     // Query untuk mengambil nama file lama dari database
     $sql_get_file = "SELECT dokumen FROM data_anak WHERE id = '$id'";
@@ -63,17 +72,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($dokumen_baru) {
         // Jika ada file baru, update dokumen
         $sql = "UPDATE data_anak SET 
+                    id_anak = '$id_siswa',  
                     no_induk = '$no_induk',
                     nama_lengkap = '$nama',
                     nisn = '$nisn',
-                    dokumen = '$dokumen_baru'
+                    dokumen = '$dokumen_baru'  
                 WHERE id = '$id'";
     } else {
         // Jika tidak ada file baru, update data tanpa mengganti dokumen
         $sql = "UPDATE data_anak SET 
+                    id_anak = '$id_siswa',  
                     no_induk = '$no_induk',
                     nama_lengkap = '$nama',
-                    nisn = '$nisn'
+                    nisn = '$nisn' 
                 WHERE id = '$id'";
     }
 

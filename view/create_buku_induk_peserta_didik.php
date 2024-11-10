@@ -15,11 +15,21 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Mengambil data dari form
+    $idSiswa = $_POST['id_siswa'];
     $noInduk = $_POST['no_induk'];
     $nisn = $_POST['nisn'];
-    $nama = $_POST['nama'];
+
+    // Query untuk mengambil data nama lengkap siswa berdasarkan ID yang dipilih
+    $siswaDetailQuery = "SELECT nama FROM anak WHERE id = ?";
+    $stmt = $conn->prepare($siswaDetailQuery);
+    $stmt->bind_param("i", $idSiswa);
+    $stmt->execute();
+    $siswaResult = $stmt->get_result();
+    $siswaData = $siswaResult->fetch_assoc(); // Mengambil data sebagai array asosiatif
+    $nama = $siswaData['nama']; // Ambil nilai nama dari array
     
     // Mengambil data file upload
     $fileName = $_FILES['file_upload']['name'];
@@ -41,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Memindahkan file ke folder upload
         if (move_uploaded_file($fileTmpName, $uploadDir . $newFileName)) {
             // Simpan data ke database, termasuk nama file yang telah diubah
-            $sql = "INSERT INTO data_anak (no_induk, nisn, nama_lengkap, dokumen) 
-                    VALUES ('$noInduk', '$nisn', '$nama', '$newFileName')";
+            $sql = "INSERT INTO data_anak (id_anak, no_induk, nisn, nama_lengkap, dokumen) 
+                    VALUES ('$idSiswa', '$noInduk', '$nisn', '$nama', '$newFileName')";
             
             if ($conn->query($sql) === TRUE) {
                 // Jika berhasil disimpan, beri feedback sukses
@@ -57,8 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else {
         // Jika tidak ada file di-upload, simpan data tanpa file
-        $sql = "INSERT INTO data_anak (no_induk, nisn, nama_lengkap) 
-                VALUES ('$noInduk', '$nisn', '$nama')";
+        $sql = "INSERT INTO data_anak (id_anak, no_induk, nisn, nama_lengkap) 
+                VALUES ('$idSiswa', '$noInduk', '$nisn', '$nama')";
         
         if ($conn->query($sql) === TRUE) {
             $_SESSION['status'] = 'success2'; // Untuk menampilkan SweetAlert
