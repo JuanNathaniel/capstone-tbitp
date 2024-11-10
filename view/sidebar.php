@@ -109,8 +109,8 @@
                             <li><a id="pemasukanPengeluaran" class="dropdown-item text-decoration-none" href="pemasukandanpengeluaran.php"><i class="bi bi-arrow-down-circle me-2"></i> Pemasukan dan Pengeluaran</a></li>
 
                             <li><a id="rencanaKegiatanAnggaran" class="dropdown-item text-decoration-none" href="rencana_kegiatan_anggaran.php"><i class="bi bi-journal me-2"></i> Rencana Kegiatan Anggaran</a></li>
-                            <li><a id="rincianBiayaPendidikan" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-calculator me-2"></i> Rincian Biaya Pendidikan</a></li>
-                            <li><a id="laporanDana" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-file-earmark-bar-graph me-2"></i> Laporan Dana</a></li>
+                            <li><a id="rincianBiayaPendidikan" class="dropdown-item text-decoration-none" href="biaya_pendidikan.php"><i class="bi bi-calculator me-2"></i> Rincian Biaya Pendidikan</a></li>
+                            <li><a id="laporanDana" class="dropdown-item text-decoration-none" href="laporan_dana.php"><i class="bi bi-file-earmark-bar-graph me-2"></i> Laporan Dana</a></li>
                             <li><a id="rekapitulasiPembayaran" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-receipt me-2"></i> Rekapitulasi Pembayaran</a></li>
                         </ul>
                     </div>
@@ -123,17 +123,10 @@
                     </a>
                     <div class="collapse" id="pembelajaranDropdown">
                         <ul class="list-unstyled ms-3">
-<<<<<<< Updated upstream
-                            <li><a id="jadwalTematikDanKegiatan" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-calendar3 me-2"></i> Jadwal Tematik dan Kegiatan</a></li>
-                            <li><a id="laporanPerkembangan" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-bar-chart-line me-2"></i> Laporan Perkembangan</a></li>
-                            <li><a id="formulirTumbuhKembang" class="dropdown-item text-decoration-none" href="formulir_deteksi_tumbuh_kembang.php"><i class="bi bi-file-earmark-medical me-2"></i> Formulir Tumbuh Kembang</a></li>
-                            <li><a id="dataKurikulumMerdeka" class="dropdown-item text-decoration-none" href="data_kurikulum_merdeka.php"><i class="bi bi-journal-bookmark-fill me-2"></i> Data Kurikulum Merdeka</a></li>
-=======
                             <li><a id="jadwalTematikDanKegiatan" class="dropdown-item text-decoration-none" href="jadwal_tematik.php"><i class="bi bi-calendar3 me-2"></i> Jadwal Tematik dan Kegiatan</a></li>
                             <li><a id="laporanPerkembangan" class="dropdown-item text-decoration-none" href="laporan_pertumbuhan_anak.php"><i class="bi bi-bar-chart-line me-2"></i> Laporan Perkembangan</a></li>
-                            <li><a id="formulirTumbuhKembang" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-file-earmark-medical me-2"></i> Formulir Tumbuh Kembang</a></li>
-                            <li><a id="dataKurikulumMerdeka" class="dropdown-item text-decoration-none" href="#"><i class="bi bi-journal-bookmark-fill me-2"></i> Data Kurikulum Merdeka</a></li>
->>>>>>> Stashed changes
+                            <li><a id="formulirTumbuhKembang" class="dropdown-item text-decoration-none" href="formulir_deteksi_tumbuh_kembang.php"><i class="bi bi-file-earmark-medical me-2"></i> Formulir Tumbuh Kembang</a></li>
+                            <li><a id="dataKurikulumMerdeka" class="dropdown-item text-decoration-none" href="data_kurikulum_merdeka.php"><i class="bi bi-journal-bookmark-fill me-2"></i> Data Kurikulum Merdeka</a></li>
                         </ul>
                     </div>
                 </div>
