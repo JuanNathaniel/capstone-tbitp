@@ -88,18 +88,23 @@
         $deleteId = $_GET['delete_id'];
         $deleteStmt = $pdo->prepare("DELETE FROM absensi_dan_jemput WHERE id = :id");
         $deleteStmt->bindParam(':id', $deleteId, PDO::PARAM_INT);
-        $deleteStmt->execute();
         
-        // Redirect ke halaman yang sama setelah penghapusan
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
+        if ($deleteStmt->execute()) {
+            // Redirect jika berhasil dihapus
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        } else {
+            echo "Penghapusan gagal. Silakan coba lagi.";
+        }
     }
 
     // Filter data berdasarkan tanggal
-    $filterDate = isset($_GET['filter_date']) ? $_GET['filter_date'] : null;
+    $filterDate = isset($_GET['filter_date']) ? $_GET['filter_date'] : date('Y-m-d');
+
+    // Query untuk mengambil data absensi dan jemput
     $sql = "
         SELECT 
-            anak.id AS id,  
+            absen.id AS id,  
             anak.nama AS nama_siswa,
             pengantar.nama_pengantar AS nama_pengantar,
             pengantar.jam_datang AS jam_datang,
@@ -116,6 +121,7 @@
         INNER JOIN 
             penjemput ON absen.id_penjemput = penjemput.id
     ";
+
     // Menambahkan filter tanggal jika ada
     if ($filterDate) {
         $sql .= " WHERE DATE(absen.date) = :filterDate";
@@ -143,7 +149,6 @@
                 <h2 class="bg-info rounded p-4 text-white transition-bg">Absensi Datang dan Jemput</h2>
                 <div class="container-fluid">
                     <div class="header d-flex justify-content-between align-items-center">
-                        <!-- <h2>Absensi Datang dan Jemput</h2> -->
                         <!-- Tombol Create -->
                         <a href="absendanPenjemputan-create.php" class="btn btn-primary">Create</a>
                     </div>
@@ -204,14 +209,17 @@
         // Fungsi konfirmasi penghapusan
         function confirmDelete(id) {
             if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+                alert("ID yang akan dihapus: " + id); // Debugging: cek ID yang dikirim
                 window.location.href = "?delete_id=" + id;
             }
         }
+
     </script>
 
     <!-- Bootstrap JavaScript dan Ikon -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         // Pilih item dengan id "absensi"
         document.getElementById('absensi').addEventListener('click', function(event) {
@@ -222,15 +230,24 @@
             window.location.href = 'absendanpenjemputan.php';
         });
 
-        // Pilih item dengan id "pemasukanpengeluaran"
-        document.getElementById('pemasukanpengeluaran').addEventListener('click', function(event) {
-            // Mencegah tindakan default jika link tidak memiliki URL di "href"
-            event.preventDefault();
-    
-            // Arahkan ke pemasukandanpengeluaran.php
-            window.location.href = 'pemasukanDanPengeluaran.php';
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.querySelector('input[name="filter_date"]');
+            
+            // Set nilai default ke tanggal hari ini jika belum diset
+            if (!dateInput.value) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+            }
+            
+            // Periksa apakah URL sudah memiliki parameter "filter_date"
+            const urlParams = new URLSearchParams(window.location.search);
+            if (!urlParams.has('filter_date')) {
+                // Jika belum ada parameter "filter_date", kirim formulir secara otomatis
+                document.querySelector('form').submit();
+            }
         });
     </script>
+
 </body>
 
 </html>

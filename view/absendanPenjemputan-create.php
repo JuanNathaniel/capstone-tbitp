@@ -1,75 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tambah Data</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Data</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body>
+    <?php
+    // Database connection
+    $pdo = new PDO("mysql:host=localhost;dbname=capstone_tpa", "root", "");
 
-<div class="container-fluid">
-        <div class="row">
-            <?php include 'sidebar.php'; ?> <!-- Include file sidebar -->
+    // Fetch list of anak
+    $stmt_anak = $pdo->query("SELECT id, nama FROM anak");
+    $list_anak = $stmt_anak->fetchAll(PDO::FETCH_ASSOC);
 
-            <!-- Konten Utama -->
-            <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
-                <h2 class="bg-info rounded p-4 text-white transition-bg">Tambah Data Pemasukan dan Pengeluaran</h2>
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Collect form data
+        $id_anak = $_POST['id_anak'];
+        $tanggal = $_POST['tanggal'];
+        $nama_pengantar = $_POST['nama_pengantar'];
+        $jam_datang = $_POST['jam_datang'];
+        $paraf_pengantar = $_POST['paraf_pengantar'];
+        $nama_penjemput = $_POST['nama_penjemput'];
+        $jam_jemput = $_POST['jam_jemput'];
+        $paraf_penjemput = $_POST['paraf_penjemput'];
 
+        // Insert data into 'pengantar' table
+        $stmt_pengantar = $pdo->prepare("
+            INSERT INTO pengantar (nama_pengantar, jam_datang, paraf) 
+            VALUES (:nama_pengantar, :jam_datang, :paraf_pengantar)
+        ");
+        $stmt_pengantar->execute([
+            ':nama_pengantar' => $nama_pengantar,
+            ':jam_datang' => $jam_datang,
+            ':paraf_pengantar' => $paraf_pengantar
+        ]);
+        $id_pengantar = $pdo->lastInsertId();
 
-        <?php
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $conn = new mysqli("localhost", "root", "", "capstone_tpa");
+        // Insert data into 'penjemput' table
+        $stmt_penjemput = $pdo->prepare("
+            INSERT INTO penjemput (nama_penjemput, jam_jemput, paraf) 
+            VALUES (:nama_penjemput, :jam_jemput, :paraf_penjemput)
+        ");
+        $stmt_penjemput->execute([
+            ':nama_penjemput' => $nama_penjemput,
+            ':jam_jemput' => $jam_jemput,
+            ':paraf_penjemput' => $paraf_penjemput
+        ]);
+        $id_penjemput = $pdo->lastInsertId();
 
-            if ($conn->connect_error) {
-                die("Koneksi gagal: " . $conn->connect_error);
-            }
+        // Insert data into 'absensi_dan_jemput' table with selected date
+        $stmt_absensi = $pdo->prepare("
+            INSERT INTO absensi_dan_jemput (id_anak, id_pengantar, id_penjemput, date)
+            VALUES (:id_anak, :id_pengantar, :id_penjemput, :tanggal)
+        ");
+        $stmt_absensi->execute([
+            ':id_anak' => $id_anak,
+            ':id_pengantar' => $id_pengantar,
+            ':id_penjemput' => $id_penjemput,
+            ':tanggal' => $tanggal
+        ]);
 
-            $pemasukan = $_POST['pemasukan'];
-            $total_pemasukan = $_POST['total_pemasukan'];
-            $pengeluaran = $_POST['pengeluaran'];
-            $total_pengeluaran = $_POST['total_pengeluaran'];
-            $date = $_POST['date'];
+        header('Location: absendanPenjemputan.php');
+        exit;
+    }
+    ?>
 
-            $sql = "INSERT INTO pemasukan_dan_pengeluaran (pemasukan, total_pemasukan, pengeluaran, total_pengeluaran, date) 
-                    VALUES ('$pemasukan', '$total_pemasukan', '$pengeluaran', '$total_pengeluaran', '$date')";
-
-            if ($conn->query($sql) === TRUE) {
-                echo "<div class='alert alert-success'>Data berhasil ditambahkan.</div>";
-            } else {
-                echo "<div class='alert alert-danger'>Gagal menambahkan data: " . $conn->error . "</div>";
-            }
-
-            $conn->close();
-        }
-        ?>
-
-        <form method="POST" class="mb-4">
+    <div class="container mt-5">
+        <h2>Create New Data</h2>
+        <form method="POST">
             <div class="mb-3">
-                <label for="pemasukan" class="form-label">Pemasukan</label>
-                <input type="text" name="pemasukan" class="form-control" id="pemasukan" placeholder="Pemasukan" required>
+                <label for="id_anak" class="form-label">Nama Anak</label>
+                <select class="form-control" id="id_anak" name="id_anak" required>
+                    <option value="">Pilih Anak</option>
+                    <?php foreach ($list_anak as $anak): ?>
+                        <option value="<?= htmlspecialchars($anak['id']) ?>"><?= htmlspecialchars($anak['nama']) ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <div class="mb-3">
-                <label for="total_pemasukan" class="form-label">Total Pemasukan</label>
-                <input type="number" name="total_pemasukan" class="form-control" id="total_pemasukan" placeholder="Total Pemasukan" required>
+                <label for="tanggal" class="form-label">Tanggal</label>
+                <input type="date" class="form-control" id="tanggal" name="tanggal" required>
             </div>
             <div class="mb-3">
-                <label for="pengeluaran" class="form-label">Pengeluaran</label>
-                <input type="text" name="pengeluaran" class="form-control" id="pengeluaran" placeholder="Pengeluaran" required>
+                <label for="nama_pengantar" class="form-label">Nama Pengantar</label>
+                <input type="text" class="form-control" id="nama_pengantar" name="nama_pengantar" required>
             </div>
             <div class="mb-3">
-                <label for="total_pengeluaran" class="form-label">Total Pengeluaran</label>
-                <input type="number" name="total_pengeluaran" class="form-control" id="total_pengeluaran" placeholder="Total Pengeluaran" required>
+                <label for="jam_datang" class="form-label">Jam Datang</label>
+                <input type="time" class="form-control" id="jam_datang" name="jam_datang" required>
             </div>
             <div class="mb-3">
-                <label for="date" class="form-label">Bulan</label>
-                <input type="month" name="date" class="form-control" id="date" required>
+                <label for="paraf_pengantar" class="form-label">Paraf Pengantar</label>
+                <input type="text" class="form-control" id="paraf_pengantar" name="paraf_pengantar" required>
             </div>
-            <button type="submit" class="btn btn-success">Simpan Data</button>
-            <a href="index.php" class="btn btn-secondary">Kembali</a>
+            <div class="mb-3">
+                <label for="nama_penjemput" class="form-label">Nama Penjemput</label>
+                <input type="text" class="form-control" id="nama_penjemput" name="nama_penjemput" required>
+            </div>
+            <div class="mb-3">
+                <label for="jam_jemput" class="form-label">Jam Jemput</label>
+                <input type="time" class="form-control" id="jam_jemput" name="jam_jemput" required>
+            </div>
+            <div class="mb-3">
+                <label for="paraf_penjemput" class="form-label">Paraf Penjemput</label>
+                <input type="text" class="form-control" id="paraf_penjemput" name="paraf_penjemput" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a href="absendanPenjemputan.php" class="btn btn-secondary">Cancel</a>
         </form>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
