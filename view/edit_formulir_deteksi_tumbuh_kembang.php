@@ -16,12 +16,10 @@ session_regenerate_id(true);
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "capstone_tpa"; // Ganti dengan nama database Anda
+$dbname = "capstone_tpa";
 
-// Membuat koneksi
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Memeriksa koneksi
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
@@ -29,14 +27,17 @@ if ($conn->connect_error) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil data dari form
     $id = $_POST['id']; // ID yang akan diupdate
-    $nama_siswa = $_POST['nama_siswa'];
+    $id_siswa = $_POST['id_siswa']; // ID yang akan diupdate
     $tahun_pelajaran = $_POST['tahun_pelajaran'];
     $keterangan = $_POST['keterangan'];
     $dokumen_baru = ""; // Menyimpan nama file baru
 
     // Query untuk mengambil nama file lama dari database
-    $sql_get_file = "SELECT pengumpulan_dokumen FROM formulir_deteksi_tumbuh_kembang WHERE id = '$id'";
-    $result = $conn->query($sql_get_file);
+    $sql_get_file = "SELECT pengumpulan_dokumen FROM formulir_deteksi_tumbuh_kembang WHERE id = ?";
+    $stmt = $conn->prepare($sql_get_file);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $oldFileName = $row['pengumpulan_dokumen']; // Nama file lama
 
@@ -74,31 +75,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($dokumen_baru) {
         // Jika ada file baru, update dokumen
         $sql = "UPDATE formulir_deteksi_tumbuh_kembang SET 
-                    nama_siswa = '$nama_siswa',
-                    tahun_pelajaran = '$tahun_pelajaran',
-                    keterangan = '$keterangan',
-                    pengumpulan_dokumen = '$dokumen_baru'
-                WHERE id = '$id'";
+                    tahun_pelajaran = ?, 
+                    keterangan = ?, 
+                    pengumpulan_dokumen = ? 
+                WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssi", $tahun_pelajaran, $keterangan, $dokumen_baru, $id);
     } else {
         // Jika tidak ada file baru, update data tanpa mengganti dokumen
         $sql = "UPDATE formulir_deteksi_tumbuh_kembang SET 
-                    nama_siswa = '$nama_siswa',
-                    tahun_pelajaran = '$tahun_pelajaran',
-                    keterangan = '$keterangan'
-                WHERE id = '$id'";
+                    tahun_pelajaran = ?, 
+                    keterangan = ? 
+                WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssi", $tahun_pelajaran, $keterangan, $id);
     }
 
     // Menjalankan query
-    if ($conn->query($sql) === TRUE) {
+    if ($stmt->execute()) {
         $_SESSION['status'] = 'success';
         // Redirect atau tampilkan pesan berhasil
         header("Location: formulir_deteksi_tumbuh_kembang.php");
         exit;
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $stmt->error;
     }
 
     // Menutup koneksi
+    $stmt->close();
     $conn->close();
 }
 ?>

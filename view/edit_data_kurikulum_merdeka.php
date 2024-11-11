@@ -35,8 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $dokumen_baru = ""; // Menyimpan nama file baru
 
     // Query untuk mengambil nama file lama dari database
-    $sql_get_file = "SELECT pengumpulan_dokumen FROM data_kurikulum_merdeka WHERE id = '$id'";
-    $result = $conn->query($sql_get_file);
+    $sql_get_file = "SELECT pengumpulan_dokumen FROM data_kurikulum_merdeka WHERE id = ?";
+    $stmt = $conn->prepare($sql_get_file);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $oldFileName = $row['pengumpulan_dokumen']; // Nama file lama
 
@@ -70,35 +73,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // Update data anak ke database, termasuk dokumen baru jika ada
+    // Update data kurikulum ke database, termasuk dokumen baru jika ada
     if ($dokumen_baru) {
         // Jika ada file baru, update dokumen
         $sql = "UPDATE data_kurikulum_merdeka SET 
-                    nama_dokumen = '$nama_dokumen',
-                    tahun_pelajaran = '$tahun_pelajaran',
-                    keterangan = '$keterangan',
-                    pengumpulan_dokumen = '$dokumen_baru'
-                WHERE id = '$id'";
+                    nama_dokumen = ?, 
+                    tahun_pelajaran = ?, 
+                    keterangan = ?, 
+                    pengumpulan_dokumen = ? 
+                WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssi", $nama_dokumen, $tahun_pelajaran, $keterangan, $dokumen_baru, $id);
     } else {
         // Jika tidak ada file baru, update data tanpa mengganti dokumen
         $sql = "UPDATE data_kurikulum_merdeka SET 
-                    nama_dokumen = '$nama_dokumen',
-                    tahun_pelajaran = '$tahun_pelajaran',
-                    keterangan = '$keterangan'
-                WHERE id = '$id'";
+                    nama_dokumen = ?, 
+                    tahun_pelajaran = ?, 
+                    keterangan = ? 
+                WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssi", $nama_dokumen, $tahun_pelajaran, $keterangan, $id);
     }
 
     // Menjalankan query
-    if ($conn->query($sql) === TRUE) {
+    if ($stmt->execute()) {
         $_SESSION['status'] = 'success';
         // Redirect atau tampilkan pesan berhasil
         header("Location: data_kurikulum_merdeka.php");
         exit;
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $stmt->error;
     }
 
     // Menutup koneksi
+    $stmt->close();
     $conn->close();
 }
 ?>

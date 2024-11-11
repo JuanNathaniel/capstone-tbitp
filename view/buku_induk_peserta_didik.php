@@ -105,7 +105,7 @@ session_regenerate_id(true);
 
     // Query untuk mengambil data
     $sql = "SELECT data_anak.id, data_anak.id_anak, data_anak.no_induk, data_anak.nisn, anak.nama, anak.usia, anak.semester, anak.kelompok, anak.tahun, dokumen FROM `data_anak` JOIN anak ON data_anak.id_anak = anak.id";
-    // $query_siswa = "SELECT id, nama FROM anak";
+    $query_siswa = "SELECT id, nama FROM anak";
 
     // Jika ada pencarian, tambahkan kondisi WHERE pada query SQL
     if ($search != '') {
@@ -113,7 +113,7 @@ session_regenerate_id(true);
     }
 
     $result = $conn->query($sql);
-    // $result_siswa = $conn->query($query_siswa);
+    $result_siswa = $conn->query($query_siswa);
     ?>
     <?php
     // Nama directory tempat file akan disimpan

@@ -32,8 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Mengambil data dari form
     $noInduk = $_POST['no_induk'];
     $nisn = $_POST['nisn'];
-    $nama = $_POST['nama'];
-    
+
     // Mengambil data file upload
     $fileName = $_FILES['file_upload']['name'];
     $fileTmpName = $_FILES['file_upload']['tmp_name'];
@@ -53,35 +52,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Memindahkan file ke folder upload
         if (move_uploaded_file($fileTmpName, $uploadDir . $newFileName)) {
-            // Simpan data ke database, termasuk nama file yang telah diubah
-            $sql = "INSERT INTO data_anak (no_induk, nisn, nama_lengkap, dokumen) 
-                    VALUES ('$noInduk', '$nisn', '$nama', '$newFileName')";
-            
-            if ($conn->query($sql) === TRUE) {
-                // Jika berhasil disimpan, beri feedback sukses
-                $_SESSION['status'] = 'success'; // Untuk menampilkan SweetAlert
-                header("Location: buku_induk_peserta_didik.php"); // Redirect kembali ke halaman utama
-                exit;
+
+            // Insert data anak menggunakan prepared statement
+            $sqlAnak = "INSERT INTO anak (nama, usia, semester, kelompok, tahun) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sqlAnak);
+            $stmt->bind_param("sssss", $nama_anak, $usia, $semester, $kelompok, $tahun);
+            if ($stmt->execute()) {
+                // Dapatkan ID terakhir yang dihasilkan untuk kolom `id_anak`
+                $idAnak = $conn->insert_id;
+
+                // Insert data ke tabel data_anak menggunakan prepared statement
+                $sqlDataAnak = "INSERT INTO data_anak (id_anak, no_induk, nisn, nama_lengkap, dokumen) VALUES (?, ?, ?, ?, ?)";
+                $stmtDataAnak = $conn->prepare($sqlDataAnak);
+                $stmtDataAnak->bind_param("iisss", $idAnak, $noInduk, $nisn, $nama_anak, $newFileName);
+
+                if ($stmtDataAnak->execute()) {
+                    $_SESSION['status'] = 'success2'; // Untuk menampilkan SweetAlert
+                    header("Location: buku_induk_peserta_didik.php"); // Redirect kembali ke halaman utama
+                    exit;
+                } else {
+                    echo "Error: " . $stmtDataAnak->error;
+                }
             } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
+                echo "Error: " . $stmt->error;
             }
         } else {
             echo "Gagal meng-upload file.";
         }
     } else {
         // Jika tidak ada file di-upload, simpan data tanpa file
-        $sql = "INSERT INTO data_anak (no_induk, nisn, nama_lengkap) 
-                VALUES ('$noInduk', '$nisn', '$nama')";
-        
-        if ($conn->query($sql) === TRUE) {
-            $_SESSION['status'] = 'success2'; // Untuk menampilkan SweetAlert
-            header("Location: buku_induk_peserta_didik.php"); // Redirect kembali ke halaman utama
-            exit;
+
+        $sqlAnak = "INSERT INTO anak (nama, usia, semester, kelompok, tahun) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sqlAnak);
+        $stmt->bind_param("sssss", $nama_anak, $usia, $semester, $kelompok, $tahun);
+
+        if ($stmt->execute()) {
+            // Dapatkan ID terakhir yang dihasilkan untuk kolom `id_anak`
+            $idAnak = $conn->insert_id;
+
+            // Insert data ke tabel data_anak tanpa file menggunakan prepared statement
+            $sqlDataAnak = "INSERT INTO data_anak (id_anak, no_induk, nisn, nama_lengkap) VALUES (?, ?, ?, ?)";
+            $stmtDataAnak = $conn->prepare($sqlDataAnak);
+            $stmtDataAnak->bind_param("iiss", $idAnak, $noInduk, $nisn, $nama_anak);
+
+            if ($stmtDataAnak->execute()) {
+                $_SESSION['status'] = 'success2'; // Untuk menampilkan SweetAlert
+                header("Location: buku_induk_peserta_didik.php"); // Redirect kembali ke halaman utama
+                exit;
+            } else {
+                echo "Error: " . $stmtDataAnak->error;
+            }
         } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
+            echo "Error: " . $stmt->error;
         }
     }
 }
 
+// Menutup koneksi
 $conn->close();
 ?>
