@@ -5,12 +5,10 @@ session_start();
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "capstone_tpa"; // Ganti dengan nama database Anda
+$dbname = "capstone_tpa";
 
-// Membuat koneksi
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Memeriksa koneksi
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
@@ -18,7 +16,7 @@ if ($conn->connect_error) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil data dari form
     $id = $_POST['id']; // ID yang akan diupdate
-    $nama_siswa = $_POST['nama_siswa'];
+    $id_siswa = $_POST['id_siswa']; // ID yang akan diupdate
     $tahun_pelajaran = $_POST['tahun_pelajaran'];
     $keterangan = $_POST['keterangan'];
     $dokumen_baru = ""; // Menyimpan nama file baru
@@ -63,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($dokumen_baru) {
         // Jika ada file baru, update dokumen
         $sql = "UPDATE formulir_deteksi_tumbuh_kembang SET 
-                    nama_siswa = '$nama_siswa',
                     tahun_pelajaran = '$tahun_pelajaran',
                     keterangan = '$keterangan',
                     pengumpulan_dokumen = '$dokumen_baru'
@@ -71,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         // Jika tidak ada file baru, update data tanpa mengganti dokumen
         $sql = "UPDATE formulir_deteksi_tumbuh_kembang SET 
-                    nama_siswa = '$nama_siswa',
                     tahun_pelajaran = '$tahun_pelajaran',
                     keterangan = '$keterangan'
                 WHERE id = '$id'";

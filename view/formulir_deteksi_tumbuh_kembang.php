@@ -88,10 +88,20 @@
         unset($_SESSION['status']);
     }
 
+    // Mengambil nilai pencarian dari URL (query string)
+    $search = isset($_GET['search']) ? $_GET['search'] : '';
+
     // Query untuk mengambil data
     $sql = "SELECT * FROM `formulir_deteksi_tumbuh_kembang`";
+    $query_siswa = "SELECT * FROM anak";
+
+    // Jika ada pencarian, tambahkan kondisi WHERE pada query SQL
+    if ($search != '') {
+        $sql .= " WHERE formulir_deteksi_tumbuh_kembang.nama_siswa LIKE '%" . $conn->real_escape_string($search) . "%'";
+    }
 
     $result = $conn->query($sql);
+    $result_siswa = $conn->query($query_siswa);
 
     ?>
     <?php
@@ -119,6 +129,12 @@
                         <div class="d-flex align-items-center">
                             <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#createModal">Create</button>
                         </div>
+                        <!-- Form untuk Pencarian Nama Anak -->
+                        <form class="d-flex" action="" method="GET">
+                            <input type="text" name="search" class="form-control me-2" placeholder="Cari Nama Anak" 
+                                value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>">
+                            <button type="submit" class="btn btn-outline-secondary">Search</button>
+                        </form>
                     </div>
                 </div>
 
@@ -186,9 +202,25 @@
                     <form action="edit_formulir_deteksi_tumbuh_kembang.php" method="POST" enctype="multipart/form-data">
                         <input type="hidden" id="edit_id" name="id">
                         
+                        <!-- Dropdown Nama Siswa -->
                         <div class="mb-3">
-                            <label for="edit_nama_siswa" class="form-label">Nama Siswa</label>
-                            <input type="text" class="form-control" id="edit_nama_siswa" name="nama_siswa" required>
+                            <label for="id_siswa" class="form-label">Nama Siswa</label>
+                            <?php if ($result_siswa->num_rows > 0): ?>
+                                <select id="id_siswa" name="id_siswa" class="form-select" required disabled>
+                                    <option value="" disabled selected hidden>Pilih Nama Siswa</option>
+                                    <?php
+                                    // Menampilkan nama siswa sebagai opsi dalam dropdown
+                                    while ($row = $result_siswa->fetch_assoc()) {
+                                        echo "<option value='" . $row['id'] . "'>" . $row['nama'] . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            <?php else: ?>
+                                <p class="text-danger">Tidak ada data siswa tersedia.</p>
+                                <select id="id_siswa" name="id_siswa" class="form-select" disabled>
+                                    <option value="">Tidak ada siswa</option>
+                                </select>
+                            <?php endif; ?>
                         </div>
 
                         <div class="mb-3">
@@ -221,7 +253,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Create Formulir Deteksi dan TUmbuh Kembang</h5>
+                    <h5 class="modal-title" id="editModalLabel">Create Formulir Deteksi dan Tumbuh Kembang</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -231,10 +263,31 @@
                             <input type="file" class="form-control" id="file_upload" name="file_upload">
                         </div>
 
+                        <!-- Dropdown Nama Siswa -->
                         <div class="mb-3">
-                            <label for="nama_siswa" class="form-label">Nama Siswa</label>
-                            <input type="text" class="form-control" id="nama_siswa" name="nama_siswa" required>
+                            <label for="id_siswa" class="form-label">Nama Siswa</label>
+                            <?php
+                            // Pastikan ulang query result_siswa masih berisi data dari tabel anak
+                            $result_siswa = $conn->query($query_siswa); // Query ulang jika $result_siswa sudah digunakan
+
+                            if ($result_siswa && $result_siswa->num_rows > 0): ?>
+                                <select id="id_siswa" name="id_siswa" class="form-select" required>
+                                    <option value="" disabled selected hidden>Pilih Nama Siswa</option>
+                                    <?php
+                                    // Menampilkan nama siswa sebagai opsi dalam dropdown
+                                    while ($row = $result_siswa->fetch_assoc()) {
+                                        echo "<option value='" . $row['id'] . "'>" . $row['nama'] . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            <?php else: ?>
+                                <p class="text-danger">Tidak ada data siswa tersedia.</p>
+                                <select id="id_siswa" name="id_siswa" class="form-select" disabled>
+                                    <option value="">Tidak ada siswa</option>
+                                </select>
+                            <?php endif; ?>
                         </div>
+
 
                         <div class="mb-3">
                             <label for="tahun_pelajaran" class="form-label">Tahun Pelajaran</label>
@@ -314,17 +367,25 @@
                 const dokumen = this.getAttribute('data-pengumpulan-dokumen');
 
                 // Isi modal dengan data yang didapat
-                document.getElementById('edit_id').value = idToEdit;
-                document.getElementById('edit_nama_siswa').value = namaSiswa;
+                document.getElementById('edit_id').value = idToEdit; // Set ID ke form hidden
                 document.getElementById('edit_tahun_pelajaran').value = tahunPelajaran;
                 document.getElementById('edit_keterangan').value = keterangan;
-                document.getElementById('edit_pengumpulan_dokumen').value = dokumen;  // Jika ada dokumen
+
+                // Dropdown: Pilih ID siswa yang sesuai
+                const dropdown = document.getElementById('id_siswa');
+                for (let option of dropdown.options) {
+                    if (option.text === namaSiswa) {
+                        option.selected = true; // Pilih siswa yang sesuai
+                        break;
+                    }
+                }
 
                 // Tampilkan modal
                 const myModal = new bootstrap.Modal(document.getElementById('editModal'));
                 myModal.show();
             });
         });
+
 
 
         // Menangani ketika tombol delete ditekan

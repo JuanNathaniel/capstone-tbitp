@@ -7,66 +7,63 @@ $dbname = "capstone_tpa";
 
 session_start();
 
-// Membuat koneksi
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Memeriksa koneksi
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Mengambil data dari form
-    $namaSiswa = $_POST['nama_siswa'];
-    $tahunPelajaran = $_POST['tahun_pelajaran'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $id_siswa = $_POST['id_siswa'];
+    $tahun_pelajaran = $_POST['tahun_pelajaran'];
     $keterangan = $_POST['keterangan'];
-    
-    // Mengambil data file upload
     $fileName = $_FILES['file_upload']['name'];
-    $fileTmpName = $_FILES['file_upload']['tmp_name'];
-    $fileSize = $_FILES['file_upload']['size'];
-    $fileError = $_FILES['file_upload']['error'];
+    $targetDir = "../uploads/formulir_deteksi_dan_tumbuh_kembang/";
 
-    // Jika ada file yang diupload
-    if ($fileError === 0) {
-        // Mengambil ekstensi file
-        $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
+    // Cek apakah id_siswa ada di tabel data_anak
+    $stmt = $conn->prepare("SELECT nama_lengkap FROM data_anak WHERE id_anak = ?");
+    $stmt->bind_param("i", $id_siswa);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows === 0) {
+        echo "ID anak tidak ditemukan dalam tabel data_anak.";
+        exit();
+    }
+    $row = $result->fetch_assoc();
+    $nama_siswa = $row['nama_lengkap'];
 
-        // Membuat nama file baru (misalnya dengan menambahkan timestamp untuk mencegah duplikasi)
-        $newFileName = uniqid('', true) . '.' . $fileExt;
+    // Mengambil ekstensi file
+    $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
 
-        // Lokasi folder tempat file akan disimpan
-        $uploadDir = '../uploads/formulir_deteksi_dan_tumbuh_kembang/';
+    // Membuat nama file baru dengan uniqid untuk mencegah duplikasi
+    $newFileName = uniqid('', true) . '.' . $fileExt;
+    $targetFilePath = $targetDir . $newFileName;
 
-        // Memindahkan file ke folder upload
-        if (move_uploaded_file($fileTmpName, $uploadDir . $newFileName)) {
-            // Simpan data ke database, termasuk nama file yang telah diubah
-            $sql = "INSERT INTO formulir_deteksi_tumbuh_kembang (nama_siswa, tahun_pelajaran, keterangan, pengumpulan_dokumen) 
-                    VALUES ('$namaSiswa', '$tahunPelajaran', '$keterangan', '$newFileName')";
-            
-            if ($conn->query($sql) === TRUE) {
-                // Jika berhasil disimpan, beri feedback sukses
-                $_SESSION['status'] = 'success'; // Untuk menampilkan SweetAlert
-                header("Location: formulir_deteksi_tumbuh_kembang.php"); // Redirect kembali ke halaman utama
-                exit;
-            } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
-            }
+    // Periksa apakah ada file yang diupload
+    if (!empty($fileName)) {
+        // Simpan file dengan nama baru untuk mencegah duplikasi
+        if (move_uploaded_file($_FILES['file_upload']['tmp_name'], $targetFilePath)) {
+            // Insert data dengan file
+            $sql = "INSERT INTO formulir_deteksi_tumbuh_kembang (id_anak, nama_siswa, tahun_pelajaran, pengumpulan_dokumen, keterangan) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("issss", $id_siswa, $nama_siswa, $tahun_pelajaran, $newFileName, $keterangan);
         } else {
             echo "Gagal meng-upload file.";
+            exit();
         }
     } else {
-        // Jika tidak ada file di-upload, simpan data tanpa file
-        $sql = "INSERT INTO formulir_deteksi_tumbuh_kembang (nama_siswa, tahun_pelajaran, keterangan) 
-                VALUES ('$namaSiswa', '$tahunPelajaran', '$keterangan')";
-        
-        if ($conn->query($sql) === TRUE) {
-            $_SESSION['status'] = 'success2'; // Untuk menampilkan SweetAlert
-            header("Location: formulir_deteksi_tumbuh_kembang.php"); // Redirect kembali ke halaman utama
-            exit;
-        } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
-        }
+        // Insert data tanpa file
+        $sql = "INSERT INTO formulir_deteksi_tumbuh_kembang (id_anak, nama_siswa, tahun_pelajaran, keterangan) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("isss", $id_siswa, $nama_siswa, $tahun_pelajaran, $keterangan);
+    }
+
+    // Eksekusi pernyataan insert
+    if ($stmt->execute()) {
+        $_SESSION['status'] = 'success2';
+        header("Location: formulir_deteksi_tumbuh_kembang.php");
+    } else {
+        echo "Error: " . $stmt->error;
     }
 }
 
