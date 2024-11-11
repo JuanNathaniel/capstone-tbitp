@@ -1,4 +1,7 @@
 <?php
+// Memulai sesi untuk status
+session_start();
+
 // Koneksi ke database
 $servername = "localhost";
 $username = "root";
@@ -26,22 +29,26 @@ $sql = "UPDATE daftar_hadir_guru
         SET id_guru = ?, jam_datang = ?, jam_pulang = ?, keterangan = ?, date = ? 
         WHERE id_daftarhadirguru = ?";
 
+// Menyiapkan prepared statement
 $stmt = $conn->prepare($sql);
+
+// Mengikat parameter dengan tipe data yang sesuai
 $stmt->bind_param("sssssi", $id_guru, $jam_datang, $jam_pulang, $keterangan, $tanggal, $id_daftar_hadir_guru);
 
+// Mengeksekusi query
 if ($stmt->execute()) {
     // Set session status success
-    session_start();
     $_SESSION['status'] = 'success';
     
     // Arahkan kembali ke halaman utama dengan parameter status success
     header("Location: daftar_hadir_guru.php");
     exit;
 } else {
-    // Jika gagal
+    // Jika query gagal
     echo "Error: " . $stmt->error;
 }
 
+// Menutup prepared statement dan koneksi
 $stmt->close();
 $conn->close();
 ?>

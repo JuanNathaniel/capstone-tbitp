@@ -15,7 +15,6 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Mengambil data dari form
     $nama_anak = $_POST['nama_anak'];
@@ -26,15 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $kelompok = $_POST['kelompok'];
     $tahun = $_POST['tahun'];
 
-    // // Query untuk mengambil data nama lengkap siswa berdasarkan ID yang dipilih
-    // $siswaDetailQuery = "SELECT nama FROM anak WHERE id = ?";
-    // $stmt = $conn->prepare($siswaDetailQuery);
-    // $stmt->bind_param("i", $idSiswa);
-    // $stmt->execute();
-    // $siswaResult = $stmt->get_result();
-    // $siswaData = $siswaResult->fetch_assoc(); // Mengambil data sebagai array asosiatif
-    // $nama = $siswaData['nama']; // Ambil nilai nama dari array
-    
     // Mengambil data file upload
     $fileName = $_FILES['file_upload']['name'];
     $fileTmpName = $_FILES['file_upload']['tmp_name'];
@@ -54,56 +44,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Memindahkan file ke folder upload
         if (move_uploaded_file($fileTmpName, $uploadDir . $newFileName)) {
-            // Jika tidak ada file di-upload, simpan data tanpa file
-            $sqlAnak = "INSERT INTO anak (nama, usia, semester, kelompok, tahun) 
-            VALUES ('$nama_anak', '$usia', '$semester','$kelompok', '$tahun')";
-    
-            if ($conn->query($sqlAnak) === TRUE) {
+            // Insert data anak menggunakan prepared statement
+            $sqlAnak = "INSERT INTO anak (nama, usia, semester, kelompok, tahun) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sqlAnak);
+            $stmt->bind_param("sssss", $nama_anak, $usia, $semester, $kelompok, $tahun);
+            if ($stmt->execute()) {
                 // Dapatkan ID terakhir yang dihasilkan untuk kolom `id_anak`
                 $idAnak = $conn->insert_id;
-            
-                // Query untuk memasukkan data ke tabel `data_anak` menggunakan id dari tabel `anak`
-                $sqlDataAnak = "INSERT INTO data_anak (id_anak, no_induk, nisn, nama_lengkap, dokumen) 
-                                VALUES ('$idAnak', '$noInduk', '$nisn', '$nama_anak', '$newFileName')";
-            
-                if ($conn->query($sqlDataAnak) === TRUE) {
+
+                // Insert data ke tabel data_anak menggunakan prepared statement
+                $sqlDataAnak = "INSERT INTO data_anak (id_anak, no_induk, nisn, nama_lengkap, dokumen) VALUES (?, ?, ?, ?, ?)";
+                $stmtDataAnak = $conn->prepare($sqlDataAnak);
+                $stmtDataAnak->bind_param("iisss", $idAnak, $noInduk, $nisn, $nama_anak, $newFileName);
+
+                if ($stmtDataAnak->execute()) {
                     $_SESSION['status'] = 'success2'; // Untuk menampilkan SweetAlert
                     header("Location: buku_induk_peserta_didik.php"); // Redirect kembali ke halaman utama
                     exit;
                 } else {
-                    echo "Error: " . $sqlDataAnak . "<br>" . $conn->error;
+                    echo "Error: " . $stmtDataAnak->error;
                 }
             } else {
-                echo "Error: " . $sqlAnak . "<br>" . $conn->error;
+                echo "Error: " . $stmt->error;
             }
         } else {
             echo "Gagal meng-upload file.";
         }
     } else {
         // Jika tidak ada file di-upload, simpan data tanpa file
-        $sqlAnak = "INSERT INTO anak (nama, usia, semester, kelompok, tahun) 
-                VALUES ('$nama_anak', '$usia', '$semester','$kelompok', '$tahun')";
-        
-        if ($conn->query($sqlAnak) === TRUE) {
+        $sqlAnak = "INSERT INTO anak (nama, usia, semester, kelompok, tahun) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sqlAnak);
+        $stmt->bind_param("sssss", $nama_anak, $usia, $semester, $kelompok, $tahun);
+
+        if ($stmt->execute()) {
             // Dapatkan ID terakhir yang dihasilkan untuk kolom `id_anak`
             $idAnak = $conn->insert_id;
-        
-            // Query untuk memasukkan data ke tabel `data_anak` menggunakan id dari tabel `anak`
-            $sqlDataAnak = "INSERT INTO data_anak (id_anak, no_induk, nisn, nama_lengkap) 
-                            VALUES ('$idAnak', '$noInduk', '$nisn', '$nama_anak')";
-        
-            if ($conn->query($sqlDataAnak) === TRUE) {
+
+            // Insert data ke tabel data_anak tanpa file menggunakan prepared statement
+            $sqlDataAnak = "INSERT INTO data_anak (id_anak, no_induk, nisn, nama_lengkap) VALUES (?, ?, ?, ?)";
+            $stmtDataAnak = $conn->prepare($sqlDataAnak);
+            $stmtDataAnak->bind_param("iiss", $idAnak, $noInduk, $nisn, $nama_anak);
+
+            if ($stmtDataAnak->execute()) {
                 $_SESSION['status'] = 'success2'; // Untuk menampilkan SweetAlert
                 header("Location: buku_induk_peserta_didik.php"); // Redirect kembali ke halaman utama
                 exit;
             } else {
-                echo "Error: " . $sqlDataAnak . "<br>" . $conn->error;
+                echo "Error: " . $stmtDataAnak->error;
             }
         } else {
-            echo "Error: " . $sqlAnak . "<br>" . $conn->error;
+            echo "Error: " . $stmt->error;
         }
     }
 }
 
+// Menutup koneksi
 $conn->close();
 ?>

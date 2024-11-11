@@ -36,12 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $siswaData = $siswaResult->fetch_assoc(); // Mengambil data sebagai array asosiatif
     $nama = $siswaData['nama']; // Ambil nilai nama dari array
 
-    // // Query untuk mengambil nama file lama dari database
-    // $sql_get_file = "SELECT dokumen FROM data_anak WHERE id = '$id'";
-    // $result = $conn->query($sql_get_file);
-    // $row = $result->fetch_assoc();
-    // $oldFileName = $row['dokumen']; // Nama file lama
-
     // Cek apakah ada file baru yang diupload
     if (isset($_FILES['file_upload']) && $_FILES['file_upload']['error'] == 0) {
         // Ambil informasi file
@@ -76,48 +70,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($dokumen_baru) {
         // Jika ada file baru, update dokumen
         $sql = "UPDATE data_anak SET 
-                    id_anak = '$id_siswa',  
-                    no_induk = '$no_induk',
-                    nama_lengkap = '$nama',
-                    nisn = '$nisn',
-                    dokumen = '$dokumen_baru'  
-                WHERE id = '$id'";
+                    id_anak = ?,  
+                    no_induk = ?, 
+                    nama_lengkap = ?, 
+                    nisn = ?, 
+                    dokumen = ? 
+                WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("iisssi", $id_siswa, $no_induk, $nama, $nisn, $dokumen_baru, $id);
     } else {
         // Jika tidak ada file baru, update data tanpa mengganti dokumen
         $sql = "UPDATE data_anak SET 
-                    id_anak = '$id_siswa',  
-                    no_induk = '$no_induk',
-                    nama_lengkap = '$nama',
-                    nisn = '$nisn' 
-                WHERE id = '$id'";
+                    id_anak = ?,  
+                    no_induk = ?, 
+                    nama_lengkap = ?, 
+                    nisn = ? 
+                WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("iissi", $id_siswa, $no_induk, $nama, $nisn, $id);
     }
 
     $sql2 = "UPDATE anak SET 
-        nama = '$nama',
-        usia = '$usia',
-        semester = '$semester',
-        kelompok = '$kelompok',
-        tahun = '$tahun'
-    WHERE id = '$id_siswa'";
+                nama = ?, 
+                usia = ?, 
+                semester = ?, 
+                kelompok = ?, 
+                tahun = ? 
+            WHERE id = ?";
+    $stmt2 = $conn->prepare($sql2);
+    $stmt2->bind_param("sssssi", $nama, $usia, $semester, $kelompok, $tahun, $id_siswa);
 
     // Menjalankan query pertama
-    if ($conn->query($sql) === TRUE) {
-        // Menjalankan query kedua jika query pertama berhasil
-        if ($conn->query($sql2) === TRUE) {
+    $conn->begin_transaction();
+    try {
+        if ($stmt->execute() && $stmt2->execute()) {
             // Commit transaksi jika kedua query berhasil
             $conn->commit();
             $_SESSION['status'] = 'success';
             header("Location: buku_induk_peserta_didik.php");
             exit;
         } else {
-            // Rollback jika query kedua gagal
+            // Rollback jika query gagal
             $conn->rollback();
-            echo "Error on second query: " . $sql2 . "<br>" . $conn->error;
+            echo "Error: " . $conn->error;
         }
-    } else {
-        // Rollback jika query pertama gagal
+    } catch (Exception $e) {
+        // Rollback jika terjadi exception
         $conn->rollback();
-        echo "Error on first query: " . $sql . "<br>" . $conn->error;
+        echo "Exception: " . $e->getMessage();
     }
 }
 ?>
