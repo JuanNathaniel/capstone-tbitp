@@ -1,5 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<?php
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Regenerasi ID sesi untuk keamanan ekstra
+session_regenerate_id(true);
+?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,9 +79,15 @@
         exit;
     }
     ?>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <?php include 'sidebar.php'; ?>
 
-    <div class="container mt-5">
-        <h2>Create New Data</h2>
+            <!-- Konten Utama -->
+            <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Absensi Datang dan Jemput - Create</h2>
+                
         <form method="POST">
             <div class="mb-3">
                 <label for="id_anak" class="form-label">Nama Anak</label>

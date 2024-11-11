@@ -1,5 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Regenerasi ID sesi untuk keamanan ekstra
+session_regenerate_id(true);
+?>
 
 <head>
     <meta charset="utf-8">
@@ -7,16 +19,12 @@
     <title>Home</title>
     <link href="../scss/custom.scss" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-    </style>
 </head>
 
 <body>
     <div class="container-fluid">
         <div class="row">
             <?php include 'sidebar.php'; ?>
-
-            <div class="hover-trigger"></div>
 
             <!-- Konten Utama -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
@@ -61,4 +69,5 @@
     <!-- Bootstrap JavaScript dan Ikon -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

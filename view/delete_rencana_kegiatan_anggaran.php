@@ -1,6 +1,17 @@
 <?php
-// Mulai session
 session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Regenerasi ID sesi untuk keamanan ekstra
+session_regenerate_id(true);
+?>
+<?php
+
 
 // Cek apakah ID ada di URL
 if (isset($_GET['id'])) {
