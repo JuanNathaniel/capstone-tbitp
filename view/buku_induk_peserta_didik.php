@@ -8,60 +8,6 @@
     <link href="../scss/custom.scss" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Styling Sidebar */
-        .sidebar {
-            background-color: #333;
-            padding-top: 20px;
-            height: 100vh;
-        }
-
-        .btn-outline-primary {
-            color: white;
-            border-color: white;
-        }
-
-        .btn-outline-primary:hover {
-            color: grey;
-            border-color: grey;
-        }
-
-        /* Styling for dropdown hover */
-        .dropdown-toggle {
-            color: white;
-            cursor: pointer;
-        }
-
-        /* Show dropdown on hover, push elements down */
-        .dropdown:hover .dropdown-menu {
-            display: block;
-            position: relative; /* Position relative to push content below */
-            margin-top: 5px;
-        }
-
-        .dropdown-menu {
-            display: none; /* Hide by default, shown on hover */
-            padding: 0;
-            background-color: #444; /* Background for dropdown */
-        }
-
-        .dropdown-item {
-            color: white;
-            padding: 8px 16px;
-        }
-
-        .dropdown-item:hover {
-            background-color: #555;
-        }
-
-        .logout {
-            color: white;
-            margin-top: 10px;
-        }
-
-        .logout:hover {
-            color: grey;
-        }
-
         .transition-bg {
             background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
         }
@@ -142,11 +88,20 @@
         unset($_SESSION['status']);
     }
 
+    // Mengambil nilai pencarian dari URL (query string)
+    $search = isset($_GET['search']) ? $_GET['search'] : '';
+
     // Query untuk mengambil data
-    $sql = "SELECT id, id_anak, no_induk, nisn, nama_lengkap, dokumen FROM `data_anak`";
+    $sql = "SELECT data_anak.id, data_anak.id_anak, data_anak.no_induk, data_anak.nisn, anak.nama, anak.usia, anak.semester, anak.kelompok, anak.tahun, dokumen FROM `data_anak` JOIN anak ON data_anak.id_anak = anak.id";
+    // $query_siswa = "SELECT id, nama FROM anak";
+
+    // Jika ada pencarian, tambahkan kondisi WHERE pada query SQL
+    if ($search != '') {
+        $sql .= " WHERE anak.nama LIKE '%" . $conn->real_escape_string($search) . "%'";
+    }
 
     $result = $conn->query($sql);
-
+    // $result_siswa = $conn->query($query_siswa);
     ?>
     <?php
     // Nama directory tempat file akan disimpan
@@ -173,9 +128,14 @@
                         <div class="d-flex align-items-center">
                             <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#createModal">Create</button>
                         </div>
+                        <!-- Form untuk Pencarian Nama Anak -->
+                        <form class="d-flex" action="" method="GET">
+                            <input type="text" name="search" class="form-control me-2" placeholder="Cari Nama Anak" 
+                                value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>">
+                            <button type="submit" class="btn btn-outline-secondary">Search</button>
+                        </form>
                     </div>
                 </div>
-
                 <br>
                 <table class="table table-bordered table-hover">
                     <thead>
@@ -184,6 +144,10 @@
                             <th scope="col">NO INDUK</th>
                             <th scope="col">NISN</th>
                             <th scope="col">NAMA</th>
+                            <th scope="col">USIA</th>
+                            <th scope="col">SEMESTER</th>
+                            <th scope="col">KELOMPOK</th>
+                            <th scope="col">TAHUN</th>
                             <th scope="col">DOKUMEN</th>
                             <th scope="col">ACTION</th>
                         </tr>
@@ -196,7 +160,11 @@
                                 echo "<td scope='row'>" . $no . "</td>";
                                 echo "<td>" . $row["no_induk"] . "</td>";
                                 echo "<td>" . $row["nisn"] . "</td>";
-                                echo "<td>" . $row["nama_lengkap"] . "</td>";
+                                echo "<td>" . $row["nama"] . "</td>";
+                                echo "<td>" . $row["usia"] . "</td>";
+                                echo "<td>" . $row["semester"] . "</td>";
+                                echo "<td>" . $row["kelompok"] . "</td>";
+                                echo "<td>" . $row["tahun"] . "</td>";
                                 // Pastikan Anda memiliki directory tempat file disimpan, misalnya 'uploads/bukuinduk/'
                                 $filePath = '../uploads/bukuinduk/' . $row["dokumen"];
 
@@ -213,7 +181,11 @@
                                         data-id='{$row['id']}'
                                         data-no-induk='{$row['no_induk']}'
                                         data-nisn='{$row['nisn']}'
-                                        data-nama='{$row['nama_lengkap']}'
+                                        data-nama='{$row['nama']}'
+                                        data-usia='{$row['usia']}'
+                                        data-semester='{$row['semester']}'
+                                        data-kelompok='{$row['kelompok']}'
+                                        data-tahun='{$row['tahun']}'
                                         data-dokumen='{$row['dokumen']}'>Edit</button>&nbsp;&nbsp;
                                     <button class='btn btn-danger delete-btn' data-id='{$row['id']}'>Delete</button>
                                 </td>";
@@ -239,6 +211,27 @@
                     <form action="edit_buku_induk_peserta_didik.php" method="POST" enctype="multipart/form-data">
                         <input type="hidden" id="edit_id" name="id">
                         
+                        <!-- Dropdown Nama Siswa -->
+                        <div class="mb-3">
+                            <label for="id_siswa" class="form-label">Nama Siswa</label>
+                            <?php if ($result_siswa->num_rows > 0): ?>
+                                <select id="id_siswa" name="id_siswa" class="form-select" required>
+                                    <option value="" disabled selected hidden>Pilih Nama Siswa</option>
+                                    <?php
+                                    // Menampilkan nama siswa sebagai opsi dalam dropdown
+                                    while ($row = $result_siswa->fetch_assoc()) {
+                                        echo "<option value='" . $row['id'] . "'>" . $row['nama'] . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            <?php else: ?>
+                                <p class="text-danger">Tidak ada data siswa tersedia.</p>
+                                <select id="id_siswa" name="id_siswa" class="form-select" disabled>
+                                    <option value="">Tidak ada siswa</option>
+                                </select>
+                            <?php endif; ?>
+                        </div>
+
                         <div class="mb-3">
                             <label for="edit_no_induk" class="form-label">Nomor Induk</label>
                             <input type="text" class="form-control" id="edit_no_induk" name="no_induk" required>
@@ -250,8 +243,23 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="edit_nama" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="edit_nama" name="nama" required>
+                            <label for="edit_usia" class="form-label">Usia</label>
+                            <input type="text" class="form-control" id="edit_usia" name="usia" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_semester" class="form-label">Semester</label>
+                            <input type="text" class="form-control" id="edit_semester" name="semester" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_kelompok" class="form-label">Kelompok</label>
+                            <input type="text" class="form-control" id="edit_kelompok" name="kelompok" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_tahun" class="form-label">Tahun</label>
+                            <input type="text" class="form-control" id="edit_tahun" name="tahun" required>
                         </div>
 
                         <div class="mb-3">
@@ -279,6 +287,11 @@
                 </div>
                 <div class="modal-body">
                     <form action="create_buku_induk_peserta_didik.php" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                            <label for="nama_anak" class="form-label">Nama Anak</label>
+                            <input type="text" class="form-control" id="nama_anak" name="nama_anak" required>
+                        </div>
+
                         <div class="mb-3">
                             <label for="no_induk" class="form-label">Nomor Induk</label>
                             <input type="text" class="form-control" id="no_induk" name="no_induk" required>
@@ -290,8 +303,23 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="nama" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="nama" name="nama" required>
+                            <label for="usia" class="form-label">Usia</label>
+                            <input type="text" class="form-control" id="usia" name="usia" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="semester" class="form-label">Semester</label>
+                            <input type="text" class="form-control" id="semester" name="semester" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="kelompok" class="form-label">Kelompok</label>
+                            <input type="text" class="form-control" id="kelompok" name="kelompok" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tahun" class="form-label">Tahun</label>
+                            <input type="text" class="form-control" id="tahun" name="tahun" required>
                         </div>
 
                         <div class="mb-3">
@@ -347,8 +375,7 @@
         }
     ?>
 
-
-    // <!-- JS Script -->
+    <!-- JS Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
 
@@ -364,22 +391,41 @@
                 const namaAnak = this.getAttribute('data-nama');
                 const noInduk = this.getAttribute('data-no-induk');
                 const nisn = this.getAttribute('data-nisn');
-                const tanggal = this.getAttribute('data-tanggal');
+                const usia = this.getAttribute('data-usia');
+                const semester = this.getAttribute('data-semester');
+                const kelompok = this.getAttribute('data-kelompok');
+                const tahun = this.getAttribute('data-tahun');
                 const dokumen = this.getAttribute('data-dokumen');
 
                 // Isi modal dengan data yang didapat
                 document.getElementById('edit_id').value = idToEdit;
                 document.getElementById('edit_no_induk').value = noInduk;
-                document.getElementById('edit_nama').value = namaAnak;
                 document.getElementById('edit_nisn').value = nisn;
-                document.getElementById('edit_dokumen').value = dokumen;  // Jika ada dokumen
+                document.getElementById('edit_usia').value = usia;
+                document.getElementById('edit_semester').value = semester;
+                document.getElementById('edit_kelompok').value = kelompok;
+                document.getElementById('edit_tahun').value = tahun;
+                
+                // Update dropdown Nama Siswa agar terpilih sesuai data yang ada
+                const idSiswaDropdown = document.getElementById('id_siswa');
+                const options = idSiswaDropdown.getElementsByTagName('option');
+                for (let option of options) {
+                    if (option.value == idToEdit) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+
+                // Update nilai dokumen jika ada (optional, tergantung apakah Anda ingin menampilkannya)
+                if (dokumen) {
+                    document.getElementById('edit_dokumen').value = dokumen;
+                }
 
                 // Tampilkan modal
                 const myModal = new bootstrap.Modal(document.getElementById('editModal'));
                 myModal.show();
             });
         });
-
 
         // Menangani ketika tombol delete ditekan
         const deleteButtons = document.querySelectorAll('.delete-btn');

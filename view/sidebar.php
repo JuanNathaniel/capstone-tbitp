@@ -110,7 +110,7 @@
                             <li><a id="rencanaKegiatanAnggaran" class="dropdown-item text-decoration-none" href="rencana_kegiatan_anggaran.php"><i class="bi bi-journal me-2"></i> Rencana Kegiatan Anggaran</a></li>
                             <li><a id="rincianBiayaPendidikan" class="dropdown-item text-decoration-none" href="biaya_pendidikan.php"><i class="bi bi-calculator me-2"></i> Rincian Biaya Pendidikan</a></li>
                             <li><a id="laporanDana" class="dropdown-item text-decoration-none" href="laporan_dana.php"><i class="bi bi-file-earmark-bar-graph me-2"></i> Laporan Dana</a></li>
-                            <li><a id="rekapitulasiPembayaran" class="dropdown-item text-decoration-none" href="rekapitulasi_pembayaran_anak.php"><i class="bi bi-receipt me-2"></i> Rekapitulasi Pembayaran</a></li>
+                          <li><a id="rekapitulasiPembayaran" class="dropdown-item text-decoration-none" href="rekapitulasi_pembayaran_anak.php"><i class="bi bi-receipt me-2"></i> Rekapitulasi Pembayaran</a></li>
                         </ul>
                     </div>
                 </div>
