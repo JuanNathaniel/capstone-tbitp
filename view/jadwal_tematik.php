@@ -58,38 +58,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "DELETE FROM jadwal_kegiatan WHERE id='$id'";
         echo ($conn->query($sql) === TRUE) ? "Kegiatan berhasil dihapus" : "Error: " . $conn->error;
         exit;
-    }  } elseif (isset($_POST['delete_tema']) && isset($_POST['tema_id'])) {
-    // Ambil tema_id dari POST
-    $tema_id = intval($_POST['tema_id']); // Pastikan ID adalah integer
-    
-    // Debugging: Cek ID yang diterima
-    echo "Tema ID yang diterima: " . $tema_id;
-    
-    // Lakukan pengecekan apakah ID tersebut ada dalam database
-    $checkSql = "SELECT id FROM jadwal_tematik WHERE id = ?";
-    $stmt = $conn->prepare($checkSql);
-    $stmt->bind_param('i', $tema_id); // Binding parameter untuk menghindari SQL Injection
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
-        // Jika ID ada, lakukan penghapusan
-        $deleteSql = "DELETE FROM jadwal_tematik WHERE id = ?";
-        $deleteStmt = $conn->prepare($deleteSql);
-        $deleteStmt->bind_param('i', $tema_id);
-        $deleteStmt->execute();
-
-        // Cek apakah penghapusan berhasil
-        if ($deleteStmt->affected_rows > 0) {
-            echo "Tema berhasil dihapus.";
-        } else {
-            echo "Gagal menghapus tema.";
+    }elseif (isset($_POST['delete_tema'])) {
+        $tema_id = isset($_POST['tema_id']) ? (int)$_POST['tema_id'] : 0;
+        
+        // Log untuk debugging
+        error_log("Attempting to delete tema with ID: " . $tema_id);
+        
+        if ($tema_id <= 0) {
+            echo "Error: Invalid tema ID";
+            exit;
         }
-    } else {
-        echo "Tema dengan ID tersebut tidak ditemukan.";
+        
+        try {
+            // Mulai transaction
+            $conn->begin_transaction();
+            
+            // Hapus kegiatan terkait terlebih dahulu
+            $delete_kegiatan = "DELETE FROM jadwal_kegiatan WHERE id_tematik = ?";
+            $stmt_kegiatan = $conn->prepare($delete_kegiatan);
+            $stmt_kegiatan->bind_param("i", $tema_id);
+            $stmt_kegiatan->execute();
+            
+            // Hapus tema
+            $delete_tema = "DELETE FROM jadwal_tematik WHERE id = ?";
+            $stmt_tema = $conn->prepare($delete_tema);
+            $stmt_tema->bind_param("i", $tema_id);
+            $stmt_tema->execute();
+            
+            if ($stmt_tema->affected_rows > 0) {
+                $conn->commit();
+                echo "Tema dan kegiatan terkait berhasil dihapus";
+            } else {
+                throw new Exception("Tema dengan ID " . $tema_id . " tidak ditemukan");
+            }
+            
+        } catch (Exception $e) {
+            $conn->rollback();
+            echo "Error: " . $e->getMessage();
+            error_log("Error deleting tema: " . $e->getMessage());
+        }
+        
+        exit;
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -299,22 +310,23 @@ while ($kegiatan = $resultKegiatan->fetch_assoc()):
 <!-- Modal Delete Tema -->
 <div class="modal fade" id="deleteTemaModal" tabindex="-1" aria-labelledby="deleteTemaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="delete_tema.php" method="POST" id="deleteTemaForm">
+        <form id="deleteTemaForm">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteTemaModalLabel">Hapus Tema</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="delete_tema" value="1">
                     <div class="mb-3">
-                        <label for="tema_id">Pilih Tema yang akan dihapus</label>
+                        <label for="tema_id" class="form-label">Pilih Tema yang akan dihapus</label>
                         <select name="tema_id" id="tema_id" class="form-control" required>
+                            <option value="">-- Pilih Tema --</option>
                             <?php
-                            // Menampilkan daftar tema
-                            $resultTema = $conn->query("SELECT * FROM jadwal_tematik");
+                            $resultTema = $conn->query("SELECT id, tema FROM jadwal_tematik ORDER BY id");
                             while ($tema = $resultTema->fetch_assoc()) {
-                                echo "<option value='" . $tema['id'] . "'>" . htmlspecialchars($tema['tema']) . "</option>";
+                                echo "<option value='" . $tema['id'] . "'>" . 
+                                     htmlspecialchars($tema['tema']) . " (ID: " . $tema['id'] . ")" . 
+                                     "</option>";
                             }
                             ?>
                         </select>
@@ -477,26 +489,32 @@ $('#updateKegiatanModal').on('show.bs.modal', function(event) {
     });
 
     // Handle Delete Tema
-    $('#deleteTemaForm').on('submit', function(event) {
-        event.preventDefault();
-        
-        var temaId = $('select[name="tema_id"]').val(); // Ambil ID tema yang dipilih
-        console.log("ID Tema yang dipilih: ", temaId);  // Cek ID yang dipilih di konsol
+    // Tambahkan console.log untuk debugging
+$('#deleteTemaForm').on('submit', function(event) {
+    event.preventDefault();
+    var temaId = $('#tema_id').val(); // Pastikan menggunakan ID yang benar
 
+    if (confirm("Anda yakin ingin menghapus tema ini?")) {
         $.ajax({
             type: 'POST',
-            url: '',  // Pastikan URL sesuai atau kosong jika di halaman yang sama
-            data: { delete_tema: true, tema_id: temaId },
+            url: '',
+            data: { 
+                delete_tema: 1, 
+                tema_id: temaId 
+            },
             success: function(response) {
-                alert(response);  // Tampilkan respons dari server
-                $('#deleteTemaModal').modal('hide');  // Tutup modal setelah berhasil
-                location.reload();  // Reload halaman setelah sukses
+                console.log("Response:", response);
+                alert(response);
+                $('#deleteTemaModal').modal('hide');
+                location.reload();
             },
             error: function(xhr, status, error) {
-                alert("Terjadi kesalahan: " + error);  // Menangani error jika ada
+                console.error("Error:", error);
+                alert("Terjadi kesalahan saat menghapus tema");
             }
         });
-    });
+    }
+});
 
 </script>
 
