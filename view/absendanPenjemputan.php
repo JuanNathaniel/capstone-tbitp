@@ -1,25 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<?php
-session_start();
-
-// Cek apakah pengguna sudah login
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-// Regenerasi ID sesi untuk keamanan ekstra
-session_regenerate_id(true);
-?>
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Home</title>
     <link href="../scss/custom.scss" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <style>
         .transition-bg {
             background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
@@ -58,7 +46,7 @@ session_regenerate_id(true);
     }
 
     // Filter data berdasarkan tanggal
-    $filterDate = isset($_GET['filter_date']) ? $_GET['filter_date'] : date('Y-m-d');
+    $filterDate = isset($_GET['filter_date']) ? $_GET['filter_date'] : date(' Y-m-d');
 
     // Query untuk mengambil data absensi dan jemput
     $sql = "
@@ -164,15 +152,25 @@ session_regenerate_id(true);
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
     <script>
         // Fungsi konfirmasi penghapusan
         function confirmDelete(id) {
-            if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-                alert("ID yang akan dihapus: " + id); // Debugging: cek ID yang dikirim
-                window.location.href = "?delete_id=" + id;
-            }
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text : "Data ini akan dihapus secara permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "?delete_id=" + id;
+                }
+            });
         }
-
     </script>
 
     <!-- Bootstrap JavaScript dan Ikon -->

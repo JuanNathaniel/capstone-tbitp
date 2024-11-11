@@ -94,6 +94,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     table {
     width: 100%;
     table-layout: fixed;
+
+    .transition-bg {
+            background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
+        }
 }
 
 th, td {
@@ -251,7 +255,7 @@ tr:hover {
 
     <!-- Tabel Laporan Pertumbuhan -->
     <h3 class="mt-5">Daftar Laporan Pertumbuhan</h3>
-    <table class="table table-striped table-hover">
+    <table class="table">
         <thead>
             <tr>
                 <th>No</th>
@@ -262,54 +266,53 @@ tr:hover {
             </tr>
         </thead>
         <tbody>
-    <?php 
-    $no = 1;
-    while ($laporan = $laporanData->fetch_assoc()): ?>
-        <!-- Baris utama untuk tanggal dan tombol tindakan -->
-        <tr>
-            <td rowspan="6"><?= $no++ ?></td>
-            <td rowspan="6"><?= $laporan['date'] ?> <br> Semester <?= $laporan['semester'] ?></td>
-            <td>Nilai Moral dan Agama</td>
-            <td><?= $laporan['nilai_moral_dan_agama'] ?></td>
-            <td rowspan="6">
-                <!-- Tombol Update Laporan -->
-                <button class="btn btn-warning btn-sm updateLaporanBtn" 
-                    data-id="<?= $laporan['id'] ?>" data-date="<?= $laporan['date'] ?>"
-                    data-nilai_moral="<?= $laporan['nilai_moral_dan_agama'] ?>" 
-                    data-fisik_kasar="<?= $laporan['fisik_motorik_kasar'] ?>"
-                    data-fisik_halus="<?= $laporan['fisik_motorik_halus'] ?>" 
-                    data-kognitif="<?= $laporan['kognitif'] ?>" 
-                    data-bahasa="<?= $laporan['bahasa'] ?>" 
-                    data-sosial="<?= $laporan['sosial_emosional'] ?>">Update</button>
-                
-                <!-- Tombol Delete Laporan -->
-                <button class="btn btn-danger btn-sm deleteLaporanBtn" 
-                    data-id="<?= $laporan['id'] ?>">Delete</button>
-            </td>
-        </tr>
-        <tr>
-            <td>Fisik Motorik Kasar</td>
-            <td><?= $laporan['fisik_motorik_kasar'] ?></td>
-        </tr>
-        <tr>
-            <td>Fisik Motorik Halus</td>
-            <td><?= $laporan['fisik_motorik_halus'] ?></td>
-        </tr>
-        <tr>
-            <td>Kognitif</td>
-            <td><?= $laporan['kognitif'] ?></td>
-        </tr>
-        <tr>
-            <td>Bahasa</td>
-            <td><?= $laporan['bahasa'] ?></td>
-        </tr>
-        <tr>
-            <td>Social Emosional</td>
-            <td><?= $laporan['sosial_emosional'] ?></td>
-        </tr>
-    <?php endwhile; ?>
-</tbody>
-
+            <?php 
+            $no = 1;
+            while ($laporan = $laporanData->fetch_assoc()): ?>
+                <!-- Baris utama untuk tanggal dan tombol tindakan -->
+                <tr>
+                    <td rowspan="6"><?= $no++ ?></td>
+                    <td rowspan="6"><?= $laporan['date'] ?> <br> Semester <?= $laporan['semester'] ?></td>
+                    <td>Nilai Moral dan Agama</td>
+                    <td><?= $laporan['nilai_moral_dan_agama'] ?></td>
+                    <td rowspan="6">
+                        <!-- Tombol Update Laporan -->
+                        <button class="btn btn-warning btn-sm updateLaporanBtn" 
+                            data-id="<?= $laporan['id'] ?>" data-date="<?= $laporan['date'] ?>"
+                            data-nilai_moral="<?= $laporan['nilai_moral_dan_agama'] ?>" 
+                            data-fisik_kasar="<?= $laporan['fisik_motorik_kasar'] ?>"
+                            data-fisik_halus="<?= $laporan['fisik_motorik_halus'] ?>" 
+                            data-kognitif="<?= $laporan['kognitif'] ?>" 
+                            data-bahasa="<?= $laporan['bahasa'] ?>" 
+                            data-sosial="<?= $laporan['sosial_emosional'] ?>">Update</button>
+                        
+                        <!-- Tombol Delete Laporan -->
+                        <button class="btn btn-danger btn-sm deleteLaporanBtn" 
+                            data-id="<?= $laporan['id'] ?>">Delete</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Fisik Motorik Kasar</td>
+                    <td><?= $laporan['fisik_motorik_kasar'] ?></td>
+                </tr>
+                <tr>
+                    <td>Fisik Motorik Halus</td>
+                    <td><?= $laporan['fisik_motorik_halus'] ?></td>
+                </tr>
+                <tr>
+                    <td>Kognitif</td>
+                    <td><?= $laporan['kognitif'] ?></td>
+                </tr>
+                <tr>
+                    <td>Bahasa</td>
+                    <td><?= $laporan['bahasa'] ?></td>
+                </tr>
+                <tr>
+                    <td>Social Emosional</td>
+                    <td><?= $laporan['sosial_emosional'] ?></td>
+                </tr>
+            <?php endwhile; ?>
+        </tbody>
     </table>
 </div>
 

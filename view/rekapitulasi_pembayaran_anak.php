@@ -39,16 +39,8 @@ $anakData = $conn->query($queryAnak);
     <title>Rekapitulasi Pembayaran Anak</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .sidebar {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            width: 240px;
-            overflow-y: auto;
-            background-color: #333;
-            color: white;
-            padding-top: 20px;
+        .transition-bg {
+            background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
         }
         
         .main-content {
@@ -65,7 +57,7 @@ $anakData = $conn->query($queryAnak);
 
         <!-- Konten Utama -->
         <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
-            <h2 class="bg-info rounded p-4 text-white">Rekapitulasi Pembayaran Anak</h2>
+            <h2 class="bg-info rounded p-4 text-white transition-bg">Rekapitulasi Pembayaran Anak</h2>
 
             <!-- Formulir Pencarian -->
             <form method="GET" action="" class="mb-4">

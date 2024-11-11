@@ -55,7 +55,6 @@ session_regenerate_id(true);
 
 <body>
     <?php
-    session_start();
     // Koneksi ke database
     $servername = "localhost";
     $username = "root";

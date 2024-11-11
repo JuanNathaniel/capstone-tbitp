@@ -18,8 +18,6 @@ $username = "root";
 $password = "";
 $dbname = "capstone_tpa";
 
-session_start();
-
 // Membuat koneksi
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -30,8 +28,13 @@ if ($conn->connect_error) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Mengambil data dari form
+    $nama_anak = $_POST['nama_anak'];
+    $usia = $_POST['usia'];
     $noInduk = $_POST['no_induk'];
     $nisn = $_POST['nisn'];
+    $semester = $_POST['semester'];
+    $kelompok = $_POST['kelompok'];
+    $tahun = $_POST['tahun'];
 
     // Mengambil data file upload
     $fileName = $_FILES['file_upload']['name'];
@@ -61,6 +64,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Dapatkan ID terakhir yang dihasilkan untuk kolom `id_anak`
                 $idAnak = $conn->insert_id;
 
+                // Menambah data pembayaran default untuk anak baru di tabel rekapitulasi_pembayaran
+                $payments = [
+                    'Pendaftaran' => [0, 0, ''],
+                    'SPP Bulan' => [0, 0, ''],
+                    'Seragam' => [0, 0, ''],
+                    'Pengembangan Sekolah' => [0, 0, ''],
+                    'Kegiatan Pembelajaran' => [0, 0, '']
+                ];
+                //inituh buat rekapitulasi
+                $sql3 = "INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, cicilan_1, cicilan_2, keterangan) 
+                        VALUES (?, ?, ?, ?, ?)";
+                $stmt3 = $conn->prepare($sql3);
+
+                foreach ($payments as $jenis => $data) {
+                    $stmt3->bind_param("isiis", $idAnak, $jenis, $data[0], $data[1], $data[2]);
+                    if (!$stmt3->execute()) {
+                        throw new Exception("Gagal memasukkan data pembayaran untuk jenis: " . $jenis);
+                }
+                }
+
                 // Insert data ke tabel data_anak menggunakan prepared statement
                 $sqlDataAnak = "INSERT INTO data_anak (id_anak, no_induk, nisn, nama_lengkap, dokumen) VALUES (?, ?, ?, ?, ?)";
                 $stmtDataAnak = $conn->prepare($sqlDataAnak);
@@ -89,6 +112,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($stmt->execute()) {
             // Dapatkan ID terakhir yang dihasilkan untuk kolom `id_anak`
             $idAnak = $conn->insert_id;
+
+            // Menambah data pembayaran default untuk anak baru di tabel rekapitulasi_pembayaran
+            $payments = [
+                'Pendaftaran' => [0, 0, ''],
+                'SPP Bulan' => [0, 0, ''],
+                'Seragam' => [0, 0, ''],
+                'Pengembangan Sekolah' => [0, 0, ''],
+                'Kegiatan Pembelajaran' => [0, 0, '']
+            ];
+            //inituh buat rekapitulasi
+            $sql3 = "INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, cicilan_1, cicilan_2, keterangan) 
+                    VALUES (?, ?, ?, ?, ?)";
+            $stmt3 = $conn->prepare($sql3);
+
+            foreach ($payments as $jenis => $data) {
+                $stmt3->bind_param("isiis", $idAnak, $jenis, $data[0], $data[1], $data[2]);
+                if (!$stmt3->execute()) {
+                    throw new Exception("Gagal memasukkan data pembayaran untuk jenis: " . $jenis);
+            }
+            }
 
             // Insert data ke tabel data_anak tanpa file menggunakan prepared statement
             $sqlDataAnak = "INSERT INTO data_anak (id_anak, no_induk, nisn, nama_lengkap) VALUES (?, ?, ?, ?)";
