@@ -8,20 +8,29 @@
 </head>
 <body>
     <?php
-    // Database connection
+    // Koneksi database
     $pdo = new PDO("mysql:host=localhost;dbname=capstone_tpa", "root", "");
 
-    // Fetch current data based on ID
+    // Ambil data berdasarkan ID anak
     $id_anak = $_GET['id'];
-    $stmt = $pdo->prepare("
-        SELECT anak.nama AS nama_siswa, pengantar.nama_pengantar, pengantar.jam_datang, pengantar.paraf AS paraf_pengantar, 
-               penjemput.nama_penjemput, penjemput.jam_jemput, penjemput.paraf AS paraf_penjemput
-        FROM absensi_dan_jemput AS absen
-        INNER JOIN anak ON absen.id = anak.id
-        INNER JOIN pengantar ON absen.id_pengantar = pengantar.id
-        INNER JOIN penjemput ON absen.id_penjemput = penjemput.id
-        WHERE anak.id = :id
-    ");
+$stmt = $pdo->prepare("
+    SELECT anak.nama AS nama_siswa, pengantar.nama_pengantar, pengantar.jam_datang, pengantar.paraf AS paraf_pengantar, 
+           penjemput.nama_penjemput, penjemput.jam_jemput, penjemput.paraf AS paraf_penjemput, 
+           absen.id_pengantar, absen.id_penjemput
+    FROM absensi_dan_jemput AS absen
+    INNER JOIN anak ON absen.id_anak = anak.id
+    INNER JOIN pengantar ON absen.id_pengantar = pengantar.id
+    INNER JOIN penjemput ON absen.id_penjemput = penjemput.id
+    WHERE absen.id = :id
+");
+$stmt->execute([':id' => $id_anak]);
+$data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$data) {
+    // Jika data tidak ditemukan, tampilkan pesan atau redirect
+    echo "Data tidak ditemukan.";
+    exit;
+}
     $stmt->execute([':id' => $id_anak]);
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -33,21 +42,29 @@
         $jam_jemput = $_POST['jam_jemput'];
         $paraf_penjemput = $_POST['paraf_penjemput'];
 
-        $sql_update = "
+        // Perbarui data pengantar
+        $sql_update_pengantar = "
             UPDATE pengantar 
             SET nama_pengantar = :nama_pengantar, jam_datang = :jam_datang, paraf = :paraf_pengantar 
-            WHERE id = (SELECT id_pengantar FROM absensi_dan_jemput WHERE id_anak = :id_anak);
-
-            UPDATE penjemput 
-            SET nama_penjemput = :nama_penjemput, jam_jemput = :jam_jemput, paraf = :paraf_penjemput 
-            WHERE id = (SELECT id_penjemput FROM absensi_dan_jemput WHERE id_anak = :id_anak);
+            WHERE id = :id_pengantar
         ";
-        $stmt_update = $pdo->prepare($sql_update);
-        $stmt_update->execute([
-            ':id_anak' => $id_anak,
+        $stmt_update_pengantar = $pdo->prepare($sql_update_pengantar);
+        $stmt_update_pengantar->execute([
+            ':id_pengantar' => $data['id_pengantar'],
             ':nama_pengantar' => $nama_pengantar,
             ':jam_datang' => $jam_datang,
             ':paraf_pengantar' => $paraf_pengantar,
+        ]);
+
+        // Perbarui data penjemput
+        $sql_update_penjemput = "
+            UPDATE penjemput 
+            SET nama_penjemput = :nama_penjemput, jam_jemput = :jam_jemput, paraf = :paraf_penjemput 
+            WHERE id = :id_penjemput
+        ";
+        $stmt_update_penjemput = $pdo->prepare($sql_update_penjemput);
+        $stmt_update_penjemput->execute([
+            ':id_penjemput' => $data['id_penjemput'],
             ':nama_penjemput' => $nama_penjemput,
             ':jam_jemput' => $jam_jemput,
             ':paraf_penjemput' => $paraf_penjemput,
