@@ -131,9 +131,11 @@
                 </div>
 
                 <!-- Logout Button -->
-                <button type="button" class="btn btn-outline-primary w-100 logout d-flex align-items-center mt-auto">
-                    <i class="bi bi-box-arrow-left me-2"></i> Logout
-                </button>
+                <!-- Logout Button -->
+<a href="logout.php" class="btn btn-outline-primary w-100 logout d-flex align-items-center mt-auto">
+    <i class="bi bi-box-arrow-left me-2"></i> Logout
+</a>
+
             </nav>
         </div>
     </div>

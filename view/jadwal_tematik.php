@@ -1,4 +1,17 @@
 <?php
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Regenerasi ID sesi untuk keamanan ekstra
+session_regenerate_id(true);
+?>
+
+<?php
 $conn = new mysqli("localhost", "root", "", "capstone_tpa");
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);

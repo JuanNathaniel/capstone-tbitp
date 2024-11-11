@@ -1,5 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<?php
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Regenerasi ID sesi untuk keamanan ekstra
+session_regenerate_id(true);
+?>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -75,8 +89,17 @@ if (!$data) {
     }
     ?>
 
-    <div class="container mt-5">
-        <h2>Update Data for <?= htmlspecialchars($data['nama_siswa']) ?></h2>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <?php include 'sidebar.php'; ?>
+
+            <!-- Konten Utama -->
+            <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Update Data for <?= htmlspecialchars($data['nama_siswa']) ?></h2>
+                
+
         <form method="POST">
             <div class="mb-3">
                 <label for="nama_pengantar" class="form-label">Nama Pengantar</label>

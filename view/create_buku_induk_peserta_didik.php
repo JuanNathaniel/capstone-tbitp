@@ -1,3 +1,16 @@
+
+<?php
+session_start();
+
+// Cek apakah pengguna sudah login
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Regenerasi ID sesi untuk keamanan ekstra
+session_regenerate_id(true);
+?>
 <?php
 // Koneksi ke database
 $servername = "localhost";
@@ -17,13 +30,8 @@ if ($conn->connect_error) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Mengambil data dari form
-    $nama_anak = $_POST['nama_anak'];
     $noInduk = $_POST['no_induk'];
     $nisn = $_POST['nisn'];
-    $usia = $_POST['usia'];
-    $semester = $_POST['semester'];
-    $kelompok = $_POST['kelompok'];
-    $tahun = $_POST['tahun'];
 
     // Mengambil data file upload
     $fileName = $_FILES['file_upload']['name'];
@@ -44,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Memindahkan file ke folder upload
         if (move_uploaded_file($fileTmpName, $uploadDir . $newFileName)) {
+
             // Insert data anak menggunakan prepared statement
             $sqlAnak = "INSERT INTO anak (nama, usia, semester, kelompok, tahun) VALUES (?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sqlAnak);
@@ -72,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else {
         // Jika tidak ada file di-upload, simpan data tanpa file
+
         $sqlAnak = "INSERT INTO anak (nama, usia, semester, kelompok, tahun) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sqlAnak);
         $stmt->bind_param("sssss", $nama_anak, $usia, $semester, $kelompok, $tahun);
