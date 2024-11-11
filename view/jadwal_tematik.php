@@ -100,6 +100,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Jadwal Tematik</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .transition-bg {
+            background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
+        }
+    </style>
 </head>
 <body>
 
