@@ -84,7 +84,10 @@
 
     $stmt->execute();
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     ?>
+
+
 
     <div class="container-fluid">
         <div class="row">
@@ -98,6 +101,9 @@
                     <div class="header d-flex justify-content-between align-items-center">
                         <!-- Tombol Create -->
                         <a href="absendanPenjemputan-create.php" class="btn btn-primary">Create</a>
+<!-- Update the Download PDF button to pass the filter_date -->
+<a href="absensi_dan_jemput_pdf.php?filter_date=<?= htmlspecialchars($filterDate) ?>" class="btn btn-success">Download PDF</a>
+
                     </div>
 
                     <!-- Form Filter Tanggal -->
