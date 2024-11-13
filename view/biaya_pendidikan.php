@@ -114,6 +114,7 @@ if (isset($_GET['delete']) && isset($_GET['tahun_ajaran'])) {
             <div class="alert alert-info" role="alert">
                 Tahun Ajaran yang dipilih: <strong><?= htmlspecialchars($tahunAjaran) ?></strong>
             </div>
+            <a href="biaya_pendidikan_pdf.php?tahun_ajaran=<?= htmlspecialchars($tahunAjaran) ?>" class="btn btn-primary">Download PDF</a>
 
             <?php foreach ($jenisPendidikan as $idJenis => $jenis): ?>
                 <h3 class="mt-4"><?= htmlspecialchars($jenis['jenis_pendidikan']) ?></h3>

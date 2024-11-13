@@ -39,6 +39,7 @@ session_regenerate_id(true);
                     <!-- Tombol Tambah Data -->
                     <div class="mb-3">
                         <a href="pemasukandanpengeluaran-create.php" class="btn btn-success">Tambah Data</a>
+                                        <a href="pemasukanDanPengeluaran_pdf.php" class="btn btn-success">Download PDF</a>
                     </div>
 
                     <!-- Form untuk filter data berdasarkan bulan -->

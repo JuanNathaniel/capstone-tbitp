@@ -36,6 +36,8 @@ session_regenerate_id(true);
             <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
                 <h2 class="bg-info rounded p-4 text-white transition-bg">Aturan Penjemputan</h2>
                 <div class="container-fluid">
+                    <a href="aturanPenjemputan_pdf.php" class="btn btn-success">Download PDF</a>
+
                     <table class="table table-bordered table-striped">
                         <thead class="thead-dark">
                             <tr>
