@@ -70,7 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'SPP Bulan' => [0, 0, ''],
                     'Seragam' => [0, 0, ''],
                     'Pengembangan Sekolah' => [0, 0, ''],
-                    'Kegiatan Pembelajaran' => [0, 0, '']
+                    'Kegiatan Pembelajaran' => [0, 0, ''],
+                    'keterlambatan' => [0, 0, '']
                 ];
                 //inituh buat rekapitulasi
                 $sql3 = "INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, cicilan_1, cicilan_2, keterangan) 
@@ -119,7 +120,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'SPP Bulan' => [0, 0, ''],
                 'Seragam' => [0, 0, ''],
                 'Pengembangan Sekolah' => [0, 0, ''],
-                'Kegiatan Pembelajaran' => [0, 0, '']
+                'Kegiatan Pembelajaran' => [0, 0, ''],
+                'keterlambatan' => [0, 0, '']
             ];
             //inituh buat rekapitulasi
             $sql3 = "INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, cicilan_1, cicilan_2, keterangan) 
