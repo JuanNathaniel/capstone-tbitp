@@ -47,33 +47,63 @@ if ($anakResult && $anakResult->num_rows > 0) {
 if (isset($_GET['action']) && $_GET['action'] == 'load_data') {
     $query = "
         SELECT 
-            'Pendaftaran' AS jenis_pembayaran, ld.pendaftaran AS jumlah, rp.cicilan_1, rp.cicilan_2, rp.keterangan
+            'Pendaftaran' AS jenis_pembayaran, 
+            ld.pendaftaran AS jumlah, 
+            rp.cicilan_1, 
+            rp.cicilan_2, 
+            rp.keterangan
         FROM laporan_dana ld
         LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Pendaftaran'
         WHERE ld.nama = $id_anak
         UNION ALL
         SELECT 
-            'SPP Bulan', ld.spp_bulan, rp.cicilan_1, rp.cicilan_2, rp.keterangan
+            'SPP Bulan', 
+            ld.spp_bulan, 
+            rp.cicilan_1, 
+            rp.cicilan_2, 
+            rp.keterangan
         FROM laporan_dana ld
         LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'SPP Bulan'
         WHERE ld.nama = $id_anak
         UNION ALL
         SELECT 
-            'Seragam', ld.seragam, rp.cicilan_1, rp.cicilan_2, rp.keterangan
+            'Seragam', 
+            ld.seragam, 
+            rp.cicilan_1, 
+            rp.cicilan_2, 
+            rp.keterangan
         FROM laporan_dana ld
         LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Seragam'
         WHERE ld.nama = $id_anak
         UNION ALL
         SELECT 
-            'Pengembangan Sekolah', ld.pengembangan_sekolah, rp.cicilan_1, rp.cicilan_2, rp.keterangan
+            'Pengembangan Sekolah', 
+            ld.pengembangan_sekolah, 
+            rp.cicilan_1, 
+            rp.cicilan_2, 
+            rp.keterangan
         FROM laporan_dana ld
         LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Pengembangan Sekolah'
         WHERE ld.nama = $id_anak
         UNION ALL
         SELECT 
-            'Kegiatan Pembelajaran', ld.kegiatan_pembelajaran, rp.cicilan_1, rp.cicilan_2, rp.keterangan
+            'Kegiatan Pembelajaran', 
+            ld.kegiatan_pembelajaran, 
+            rp.cicilan_1, 
+            rp.cicilan_2, 
+            rp.keterangan
         FROM laporan_dana ld
         LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Kegiatan Pembelajaran'
+        WHERE ld.nama = $id_anak
+        UNION ALL
+        SELECT 
+            'Keterlambatan', 
+            ld.keterlambatan AS jumlah, 
+            rp.cicilan_1, 
+            rp.cicilan_2, 
+            rp.keterangan
+        FROM laporan_dana ld
+        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Keterlambatan'
         WHERE ld.nama = $id_anak
     ";
 
@@ -119,6 +149,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save_data') {
     echo "Data berhasil disimpan!";
     exit;
 }
+
 
 ?>
 
@@ -179,7 +210,7 @@ $(document).ready(function() {
 
     loadPaymentData();
 
-    $('#paymentForm').on('submit', function(e) {
+     $('#paymentForm').on('submit', function(e) {
         e.preventDefault();
         $.ajax({
             url: 'rekapitulasi_pembayaran_detail.php',
