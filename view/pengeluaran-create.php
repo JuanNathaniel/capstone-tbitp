@@ -17,7 +17,7 @@ session_regenerate_id(true);
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tambah Data Pemasukan</title>
+    <title>Tambah Data Pengeluaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -29,7 +29,7 @@ session_regenerate_id(true);
 
             <!-- Konten Utama -->
             <main class="col-md-9 col-lg-10 ms-auto">
-                <h2 class="bg-info rounded p-4 text-white transition-bg">Create Pemasukan dan Pengeluaran</h2>
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Create Pengeluaran</h2>
                 
                 <?php
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -58,7 +58,7 @@ session_regenerate_id(true);
                                 text: 'Data berhasil ditambahkan!'
                             }).then((result) => {
                                 if (result.isConfirmed) {
-                                    window.location.href = 'pemasukanDanPengeluaran.php';
+                                    window.location.href = 'pengeluaran.php';
                                 }
                             });
                         </script>";
@@ -80,11 +80,10 @@ session_regenerate_id(true);
                 <form method="POST" class="mb-4">
                     <div class="mb-3">
                         <label for="edit-jenis" class="form-label">Jenis</label>
-                        <select name="jenis" class="form-control" id="edit-jenis" required>
-                            <option value="" disabled selected>Pilih Jenis</option>
-                            <option value="pemasukan" >Pemasukan</option>
-                            <option value="pengeluaran" >Pengeluaran</option>
+                        <select name="jenis_display" class="form-control" id="edit-jenis" disabled>
+                            <option value="pengeluaran" selected>Pengeluaran</option>
                         </select>
+                        <input type="hidden" name="jenis" value="pengeluaran">
                     </div>
 
                     <div class="mb-3">

@@ -17,7 +17,7 @@ session_regenerate_id(true);
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pemasukan dan Pengeluaran</title>
+    <title>Pemasukan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .transition-bg {
@@ -34,15 +34,13 @@ session_regenerate_id(true);
             
             <!--main utama-->
             <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
-                <h2 class="bg-info rounded p-4 text-white transition-bg">Pemasukan dan Pengeluaran</h2>
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Pemasukan Only </h2>
                 <div class="container mt-5">
 
                     <!-- Tombol Tambah Data -->
                     <div class="mb-3">
-                        <a href="pemasukandanpengeluaran-create.php" class="btn btn-success">Tambah Data</a>
-                        <a href="pemasukanDanPengeluaran_pdf.php" class="btn btn-success">Download PDF</a>
-                        <a href="pemasukan.php" class="btn btn-success">Pemasukan Only</a>
-                        <a href="pengeluaran.php" class="btn btn-success">Pengeluaran Only</a>
+                        <a href="pemasukan-create.php" class="btn btn-success">Tambah Data</a>
+                        <a href="pemasukan_pdf.php" class="btn btn-success">Download PDF</a>
                     </div>
 
                     <!-- Form untuk filter data berdasarkan bulan -->
@@ -126,11 +124,11 @@ session_regenerate_id(true);
                                 </script>";
                             } else {
                                 echo "Error: " . $conn->error;
-                            }   
+                            }                                                       
                         }
 
                         // Filter data berdasarkan bulan
-                        $sql = "SELECT * FROM pemasukan_pengeluaran";
+                        $sql = "SELECT * FROM pemasukan_pengeluaran where jenis = 'pemasukan'";
                         if (isset($_GET['filter_month'])) {
                             $filter_month = $_GET['filter_month'];
                             $sql .= " WHERE DATE_FORMAT(tanggal, '%Y-%m') = '$filter_month'";
@@ -138,8 +136,7 @@ session_regenerate_id(true);
 
                         $result = $conn->query($sql);
                         $no = 1;
-                        $totalJumlahPemasukan = 0;
-                        $totalJumlahPengeluaran = 0;                   
+                        $totalJumlah = 0;
 
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
@@ -151,7 +148,7 @@ session_regenerate_id(true);
                                 echo "<td>" . $row['tanggal'] . "</td>";
                                 echo "<td>";
                                 echo "<button class='btn btn-warning' onclick='editData(" . json_encode($row) . ")'>Update</button> ";
-                                echo "<form method='POST' style='display:inline;' onsubmit='return confirmDelete()'>";
+                                echo "<form method='POST' style='display:inline;' onSubmit='return confirmDelete()'>";
                                 echo "<input type='hidden' name='id' value='" . $row['id'] . "'>";
                                 echo "<button type='submit' name='delete' class='btn btn-danger'>Delete</button>";
                                 echo "</form>";
@@ -159,12 +156,7 @@ session_regenerate_id(true);
                                 echo "</tr>";
 
                                 // Hitung total pemasukan dan pengeluaran
-                                if($row['jenis'] == "pemasukan") {
-                                    $totalJumlahPemasukan += $row['jumlah'];
-                                } else {
-                                    $totalJumlahPengeluaran += $row['jumlah'];
-                                }
-                                
+                                $totalJumlah += $row['jumlah'];
                             }
                         } else {
                             echo "<tr><td colspan='7' class='text-center'>Tidak ada data</td></tr>";
@@ -175,15 +167,10 @@ session_regenerate_id(true);
                         <!-- Menampilkan Total Pemasukan dan Pengeluaran -->
                         <tfoot>
                             <tr>
-                                <th colspan="3" class="text-end">TOTAL PEMASUKAN:</th>
-                                <th><?php echo number_format($totalJumlahPemasukan, 0, ',', '.'); ?></th>
+                                <th colspan="3" class="text-end">TOTAL:</th>
+                                <th><?php echo number_format($totalJumlah, 0, ',', '.'); ?></th>
                                 <th></th>
                             </tr>
-                            <tr>
-                                <th colspan="3" class="text-end">TOTAL PENGELUARAN:</th>
-                                <th><?php echo number_format($totalJumlahPengeluaran, 0, ',', '.'); ?></th>
-                            </tr>
-                                
                         </tfoot>
                     </table>
                 </div>
@@ -191,27 +178,6 @@ session_regenerate_id(true);
 
         </div>
     </div>
-
-    <!-- <script>
-        function confirmDelete(form) {
-            // Tampilkan dialog SweetAlert
-            Swal.fire({
-                title: 'Konfirmasi Hapus',
-                text: "Apakah Anda yakin ingin menghapus data ini?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit(); // Kirim form jika pengguna mengonfirmasi
-                }
-            });
-
-            return false; // Mencegah pengiriman form secara default
-        }
-
-    </script> -->
 
     <!-- Modal Update Data -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -226,11 +192,10 @@ session_regenerate_id(true);
                         <input type="hidden" name="id" id="edit-id">
                         <div class="mb-3">
                             <label for="edit-jenis" class="form-label">Jenis</label>
-                            <select name="jenis" class="form-control" id="edit-jenis" required>
-                                <option value="" disabled selected>Pilih Jenis</option>
-                                <option value="pemasukan" selected>Pemasukan</option>
-                                <option value="pengeluaran" selected>Pengeluaran</option>
+                            <select name="jenis" class="form-control" id="edit-jenis" required disabled>
+                                <option value="pemasukan">Pemasukan</option>
                             </select>
+                            <input type="hidden" name="jenis" value="pemasukan">
                         </div>
 
                         <div class="mb-3">
@@ -269,6 +234,21 @@ session_regenerate_id(true);
             var editModal = new bootstrap.Modal(document.getElementById("editModal"));
             editModal.show();
         }
+        
+        function confirmDelete() {
+            return Swal.fire({
+                title: 'Konfirmasi Hapus',
+                text: "Apakah Anda yakin ingin menghapus data ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                return result.isConfirmed;
+            });
+        }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 </html>
