@@ -29,7 +29,7 @@ session_regenerate_id(true);
 
             <!-- Konten Utama -->
             <main class="col-md-9 col-lg-10 ms-auto">
-                <h2 class="bg-info rounded p-4 text-white transition-bg">Create Pemasukan dan Pengeluaran</h2>
+                <h2 class="bg-info rounded p-4 text-white transition-bg">Create Pemasukan</h2>
                 
                 <?php
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -58,7 +58,7 @@ session_regenerate_id(true);
                                 text: 'Data berhasil ditambahkan!'
                             }).then((result) => {
                                 if (result.isConfirmed) {
-                                    window.location.href = 'pemasukanDanPengeluaran.php';
+                                    window.location.href = 'pemasukan.php';
                                 }
                             });
                         </script>";
@@ -80,11 +80,10 @@ session_regenerate_id(true);
                 <form method="POST" class="mb-4">
                     <div class="mb-3">
                         <label for="edit-jenis" class="form-label">Jenis</label>
-                        <select name="jenis" class="form-control" id="edit-jenis" required>
-                            <option value="" disabled selected>Pilih Jenis</option>
-                            <option value="pemasukan" >Pemasukan</option>
-                            <option value="pengeluaran" >Pengeluaran</option>
+                        <select name="jenis_display" class="form-control" id="edit-jenis" disabled>
+                            <option value="pemasukan" selected>Pemasukan</option>
                         </select>
+                        <input type="hidden" name="jenis" value="pemasukan">
                     </div>
 
                     <div class="mb-3">
