@@ -26,12 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     $seragam = $_POST['seragam'] ?? 0;
     $pengembangan_sekolah = $_POST['pengembangan_sekolah'] ?? 0;
     $kegiatan_pembelajaran = $_POST['kegiatan_pembelajaran'] ?? 0;
+    $keterlambatan = $_POST['keterlambatan'] ?? 0;
     $infaq = $_POST['infaq'] ?? 0;
     $keterangan = $_POST['keterangan'] ?? '';
 
     // Menyimpan data ke database
-    $sql = "INSERT INTO laporan_dana (nama, pendaftaran, spp_bulan, seragam, pengembangan_sekolah, kegiatan_pembelajaran, infaq, keterangan)
-            VALUES ('$nama', '$pendaftaran', '$spp_bulan', '$seragam', '$pengembangan_sekolah', '$kegiatan_pembelajaran', '$infaq', '$keterangan')";
+    $sql = "INSERT INTO laporan_dana (nama, pendaftaran, spp_bulan, seragam, pengembangan_sekolah, kegiatan_pembelajaran,keterlambatan, infaq, keterangan)
+            VALUES ('$nama', '$pendaftaran', '$spp_bulan', '$seragam', '$pengembangan_sekolah', '$kegiatan_pembelajaran','$keterlambatan', '$infaq', '$keterangan')";
 
     if ($conn->query($sql) === TRUE) {
         echo "Data berhasil disimpan";
@@ -98,6 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
             <div class="mb-3">
                 <label for="kegiatan_pembelajaran" class="form-label">Kegiatan Pembelajaran</label>
                 <input type="number" name="kegiatan_pembelajaran" class="form-control" step="0.01" id="kegiatan_pembelajaran">
+            </div>
+            
+            <div class="mb-3">
+                <label for="keterlambatan" class="form-label">Keterlambatan</label>
+                <input type="number" name="keterlambatan" class="form-control" step="0.01" id="keterlambatan">
             </div>
 
             <div class="mb-3">

@@ -26,12 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     $seragam = $_POST['seragam'] ?? 0;
     $pengembangan_sekolah = $_POST['pengembangan_sekolah'] ?? 0;
     $kegiatan_pembelajaran = $_POST['kegiatan_pembelajaran'] ?? 0;
+    $keterlambatan = $_POST['keterlambatan'] ?? 0;
     $infaq = $_POST['infaq'] ?? 0;
     $keterangan = $_POST['keterangan'] ?? '';
 
     // Update data ke database
     $sql = "UPDATE laporan_dana SET pendaftaran='$pendaftaran', spp_bulan='$spp_bulan', seragam='$seragam',
-            pengembangan_sekolah='$pengembangan_sekolah', kegiatan_pembelajaran='$kegiatan_pembelajaran', infaq='$infaq', 
+            pengembangan_sekolah='$pengembangan_sekolah', kegiatan_pembelajaran='$kegiatan_pembelajaran', keterlambatan='$keterlambatan', infaq='$infaq', 
             keterangan='$keterangan' WHERE id='$id'";
 
     if ($conn->query($sql) === TRUE) {
@@ -62,7 +63,7 @@ $sql = "SELECT laporan_dana.*, anak.nama AS nama_siswa
 $result = $conn->query($sql);
 
 // Inisialisasi variabel untuk menghitung total di setiap kolom
-$total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_kegiatan = $total_infaq = $grand_total = 0;
+$total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_kegiatan = $total_keterlambatan =  $total_infaq = $grand_total = 0;
 ?>
 
 <!DOCTYPE html>
@@ -103,6 +104,7 @@ $total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_
                     <th>Seragam</th>
                     <th>Pengembangan Sekolah</th>
                     <th>Kegiatan Pembelajaran</th>
+                    <th>Biaya Keterlambatan</th>
                     <th>Infaq</th>
                     <th>Total</th>
                     <th>Keterangan</th>
@@ -118,6 +120,7 @@ $total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_
                     $total_seragam += $row['seragam'];
                     $total_pengembangan += $row['pengembangan_sekolah'];
                     $total_kegiatan += $row['kegiatan_pembelajaran'];
+                    $total_keterlambatan += $row['keterlambatan'];
                     $total_infaq += $row['infaq'];
                     $grand_total += $total;
                 ?>
@@ -129,6 +132,7 @@ $total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_
                     <td><?= number_format($row['seragam'], 2) ?></td>
                     <td><?= number_format($row['pengembangan_sekolah'], 2) ?></td>
                     <td><?= number_format($row['kegiatan_pembelajaran'], 2) ?></td>
+                    <td><?= number_format($row['keterlambatan'], 2) ?></td>
                     <td><?= number_format($row['infaq'], 2) ?></td>
                     <td><?= number_format($total, 2) ?></td>
                     <td><?= $row['keterangan'] ?></td>
@@ -169,6 +173,10 @@ $total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_
                                     <div class="mb-3">
                                         <label for="kegiatan_pembelajaran" class="form-label">Kegiatan Pembelajaran</label>
                                         <input type="number" name="kegiatan_pembelajaran" class="form-control" value="<?= $row['kegiatan_pembelajaran'] ?>" step="0.01" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="keterlambatan" class="form-label">Keterlambatan</label>
+                                        <input type="number" name="keterlambatan" class="form-control" value="<?= $row['keterlambatan'] ?>" step="0.01" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="infaq" class="form-label">Infaq</label>
@@ -221,6 +229,7 @@ $total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_
                     <th><?= number_format($total_seragam, 2) ?></th>
                     <th><?= number_format($total_pengembangan, 2) ?></th>
                     <th><?= number_format($total_kegiatan, 2) ?></th>
+                    <th><?= number_format($total_keterlambatan, 2) ?></th>
                     <th><?= number_format($total_infaq, 2) ?></th>
                     <th><?= number_format($grand_total, 2) ?></th>
                     <th colspan="2"></th>

@@ -8,6 +8,8 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
+session_regenerate_id(true);
+
 function generatePDF() {
     // Koneksi ke database
     $servername = "localhost";
