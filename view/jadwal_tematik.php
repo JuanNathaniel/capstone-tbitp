@@ -132,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTemaModal">Create Tema</button>
     <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateTemaModal">Update Tema</button>
     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteTemaModal">Delete Tema</button>
+    <a href="jadwal_tematik_pdf.php" class="btn btn-success">Download PDF</a>
 
     <hr>
 

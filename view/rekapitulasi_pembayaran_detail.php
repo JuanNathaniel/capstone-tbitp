@@ -186,6 +186,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save_data') {
                     <tbody id="paymentTable"></tbody>
                 </table>
                 <button type="submit" class="btn btn-primary">Simpan</button>
+                <a href="rekapitulasi_anak_pdf.php?id_anak=<?= $id_anak ?>" class="btn btn-success">Download PDF</a>
             </form>
         </main>
     </div>
