@@ -92,7 +92,8 @@ $total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_
 
         
         <a href="laporan_dana-create.php" class="btn btn-success mb-4">Tambah Data</a>
-        
+        <a href="laporan_dana_pdf.php" class="btn btn-success">Download PDF</a>
+
         <!-- Tabel Data Laporan Dana -->
         <table class="table table-bordered">
             <thead>
