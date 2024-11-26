@@ -14,17 +14,20 @@ if (!isset($_SESSION['admin_id'])) {
 session_regenerate_id(true);
 
 // Koneksi ke database
-                            $servername = "localhost";
-                            $username = "root";
-                            $password = "";
-                            $dbname = "capstone_tpa";
+// $servername = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "capstone_tpa";
 
-                            $conn = new mysqli($servername, $username, $password, $dbname);
+// $conn = new mysqli($servername, $username, $password, $dbname);
 
-                            // Cek koneksi
-                            if ($conn->connect_error) {
-                                die("Koneksi gagal: " . $conn->connect_error);
-                            }
+// // Cek koneksi
+// if ($conn->connect_error) {
+//     die("Koneksi gagal: " . $conn->connect_error);
+// }
+
+// Sertakan file koneksi
+include '../includes/koneksi.php';
 
 
 if (isset($_POST['inputTerlambat'])) {

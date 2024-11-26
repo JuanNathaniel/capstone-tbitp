@@ -9,11 +9,13 @@ if (!isset($_SESSION['admin_id'])) {
 
 require('../fpdf.php'); // Mengimpor library FPDF
 
-// Koneksi ke database
-$conn = new mysqli("localhost", "root", "", "capstone_tpa");
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);
-}
+// // Koneksi ke database
+// $conn = new mysqli("localhost", "root", "", "capstone_tpa");
+// if ($conn->connect_error) {
+//     die("Koneksi gagal: " . $conn->connect_error);
+// }
+// Sertakan file koneksi
+include '../includes/koneksi.php';
 
 // Ambil data dari database
 $queryTema = "SELECT * FROM jadwal_tematik";

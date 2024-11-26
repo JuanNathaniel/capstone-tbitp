@@ -11,21 +11,23 @@ if (!isset($_SESSION['admin_id'])) {
 session_regenerate_id(true);
 ?>
 <?php
-// Koneksi ke database
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "capstone_tpa";
+// // Koneksi ke database
+// $servername = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "capstone_tpa";
 
-session_start();
+// session_start();
 
-// Membuat koneksi
-$conn = new mysqli($servername, $username, $password, $dbname);
+// // Membuat koneksi
+// $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Memeriksa koneksi
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);
-}
+// // Memeriksa koneksi
+// if ($conn->connect_error) {
+//     die("Koneksi gagal: " . $conn->connect_error);
+// }
+// Sertakan file koneksi
+include '../includes/koneksi.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Mengambil data dari form
@@ -40,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fileError = $_FILES['file_upload']['error'];
 
     // Menentukan ekstensi file yang diperbolehkan
-    $allowedExts = ['pdf', 'docx', 'xlsx']; // Contoh ekstensi yang diperbolehkan
+    $allowedExts = ['pdf', 'docx', 'xlsx', '']; // Contoh ekstensi yang diperbolehkan
     $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
 
     // Validasi ekstensi file

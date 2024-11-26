@@ -12,10 +12,12 @@ session_regenerate_id(true);
 ?>
 
 <?php
-$conn = new mysqli("localhost", "root", "", "capstone_tpa");
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);
-}
+// $conn = new mysqli("localhost", "root", "", "capstone_tpa");
+// if ($conn->connect_error) {
+//     die("Koneksi gagal: " . $conn->connect_error);
+// }
+// Sertakan file koneksi
+include '../includes/koneksi.php';
 
 // AJAX Request Handlers
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

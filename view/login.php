@@ -1,14 +1,14 @@
 <?php
 session_start();
 
-// Koneksi ke database
-$host = 'localhost';
-$dbname = 'capstone_tpa';
-$username = 'root';
-$password = '';
+// // Koneksi ke database
+// $host = 'localhost';
+// $dbname = 'capstone_tpa';
+// $username = 'root';
+// $password = '';
 
-$conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Sertakan file koneksi
+include '../includes/koneksi.php';
 
 // Inisialisasi variabel $error
 $error = null;
@@ -19,10 +19,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     // Ambil data admin berdasarkan email
-    $query = $conn->prepare("SELECT * FROM admin_tpa WHERE email = :email");
-    $query->bindParam(':email', $email);
+    // $query = $conn->prepare("SELECT * FROM admin_tpa WHERE email = :email");
+    // $query->bindParam(':email', $email);
+    // $query->execute();
+    // $admin = $query->fetch(PDO::FETCH_ASSOC);
+    $query = $conn->prepare("SELECT * FROM admin_tpa WHERE email = ?");
+    $query->bind_param("s", $email); // "s" berarti string
     $query->execute();
-    $admin = $query->fetch(PDO::FETCH_ASSOC);
+    $result = $query->get_result();
+    $admin = $result->fetch_assoc();
+
 
     // Jika email ditemukan dan password cocok
     if ($admin && password_verify($password, $admin['password'])) {

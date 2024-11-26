@@ -23,7 +23,9 @@ session_regenerate_id(true);
 <body>
     <?php
     // Koneksi database
-    $pdo = new PDO("mysql:host=localhost;dbname=capstone_tpa", "root", "");
+    // $pdo = new PDO("mysql:host=localhost;dbname=capstone_tpa", "root", "");
+    // Sertakan file koneksi
+    include '../includes/koneksi.php';
 
     // Ambil data berdasarkan ID anak
     $id_anak = $_GET['id'];

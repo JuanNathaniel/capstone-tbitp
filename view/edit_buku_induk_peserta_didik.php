@@ -13,19 +13,21 @@ session_regenerate_id(true);
 <?php
 
 
-// Koneksi ke database
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "capstone_tpa"; // Ganti dengan nama database Anda
+// // Koneksi ke database
+// $servername = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "capstone_tpa"; // Ganti dengan nama database Anda
 
-// Membuat koneksi
-$conn = new mysqli($servername, $username, $password, $dbname);
+// // Membuat koneksi
+// $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Memeriksa koneksi
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);
-}
+// // Memeriksa koneksi
+// if ($conn->connect_error) {
+//     die("Koneksi gagal: " . $conn->connect_error);
+// }
+// Sertakan file koneksi
+include '../includes/koneksi.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil data dari form

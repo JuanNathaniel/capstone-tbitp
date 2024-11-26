@@ -11,12 +11,14 @@ if (!isset($_SESSION['admin_id'])) {
 session_regenerate_id(true);
 ?>
 <?php
-// Koneksi ke database
-$conn = new mysqli("localhost", "root", "", "capstone_tpa");
+// // Koneksi ke database
+// $conn = new mysqli("localhost", "root", "", "capstone_tpa");
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// if ($conn->connect_error) {
+//     die("Connection failed: " . $conn->connect_error);
+// }
+// Sertakan file koneksi
+include '../includes/koneksi.php';
 
 // Menangani proses update data
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {

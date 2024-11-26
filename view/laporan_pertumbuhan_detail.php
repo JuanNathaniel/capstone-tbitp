@@ -11,16 +11,18 @@ if (!isset($_SESSION['admin_id'])) {
 session_regenerate_id(true);
 ?>
 <?php
-// Koneksi ke database
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$dbname = 'capstone_tpa'; // Ganti dengan nama database Anda
-$conn = new mysqli($host, $username, $password, $dbname);
+// // Koneksi ke database
+// $host = 'localhost';
+// $username = 'root';
+// $password = '';
+// $dbname = 'capstone_tpa'; // Ganti dengan nama database Anda
+// $conn = new mysqli($host, $username, $password, $dbname);
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// if ($conn->connect_error) {
+//     die("Connection failed: " . $conn->connect_error);
+// }
+// Sertakan file koneksi
+include '../includes/koneksi.php';
 
 // Mendapatkan id_anak dari URL
 $id_anak = $_GET['id_anak'];

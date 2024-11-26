@@ -69,10 +69,11 @@ session_regenerate_id(true);
                         </thead>
                         <tbody>
                         <?php
-                        $conn = new mysqli("localhost", "root", "", "capstone_tpa");
-                        if ($conn->connect_error) {
-                            die("Koneksi gagal: " . $conn->connect_error);
-                        }
+                        // $conn = new mysqli("localhost", "root", "", "capstone_tpa");
+                        // if ($conn->connect_error) {
+                        //     die("Koneksi gagal: " . $conn->connect_error);
+                        // }
+                        include '../includes/koneksi.php';
 
                         // Proses UPDATE data
                         if (isset($_POST['update'])) {

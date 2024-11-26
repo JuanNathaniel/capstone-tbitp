@@ -11,18 +11,20 @@ if (!isset($_SESSION['admin_id'])) {
 session_regenerate_id(true);
 ?>
 <?php
-// Koneksi ke database
-$servername = "localhost";  // ganti dengan nama server Anda
-$username = "root";         // ganti dengan username database Anda
-$password = "";             // ganti dengan password database Anda
-$dbname = "nama_database";  // ganti dengan nama database Anda
+// // Koneksi ke database
+// $servername = "localhost";  // ganti dengan nama server Anda
+// $username = "root";         // ganti dengan username database Anda
+// $password = "";             // ganti dengan password database Anda
+// $dbname = "nama_database";  // ganti dengan nama database Anda
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Cek koneksi
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// // Cek koneksi
+// if ($conn->connect_error) {
+//     die("Connection failed: " . $conn->connect_error);
+// }
+// Sertakan file koneksi
+include '../includes/koneksi.php';
 
 // Menangani penambahan kegiatan
 if (isset($_POST['add_kegiatan'])) {

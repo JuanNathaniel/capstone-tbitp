@@ -17,18 +17,20 @@
 
 <body>
     <?php
-    // Koneksi ke database
-    $host = 'localhost';
-    $dbname = 'capstone_tpa';
-    $username = 'root';
-    $password = '';
+    // // Koneksi ke database
+    // $host = 'localhost';
+    // $dbname = 'capstone_tpa';
+    // $username = 'root';
+    // $password = '';
 
-    try {
-        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die("Koneksi gagal: " . $e->getMessage());
-    }
+    // try {
+    //     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    //     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // } catch (PDOException $e) {
+    //     die("Koneksi gagal: " . $e->getMessage());
+    // }
+    // Sertakan file koneksi
+    include '../includes/koneksi.php';
 
     // Hapus data jika tombol delete diklik
     if (isset($_GET['delete_id'])) {

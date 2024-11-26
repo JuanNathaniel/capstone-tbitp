@@ -10,11 +10,12 @@ if (!isset($_SESSION['admin_id'])) {
 // Regenerasi ID sesi untuk keamanan ekstra
 session_regenerate_id(true);
 
-// Koneksi ke database
-$conn = new mysqli("localhost", "root", "", "capstone_tpa");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// // Koneksi ke database
+// $conn = new mysqli("localhost", "root", "", "capstone_tpa");
+// if ($conn->connect_error) {
+//     die("Connection failed: " . $conn->connect_error);
+// }
+include '../includes/koneksi.php';
 
 // Ambil id_anak dari URL
 $id_anak = isset($_GET['id_anak']) ? $_GET['id_anak'] : 0;

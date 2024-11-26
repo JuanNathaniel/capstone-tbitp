@@ -10,11 +10,13 @@ if (!isset($_SESSION['admin_id'])) {
 // Regenerasi ID sesi untuk keamanan ekstra
 session_regenerate_id(true);
 
-// Koneksi ke database
-$conn = new mysqli("localhost", "root", "", "capstone_tpa");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// // Koneksi ke database
+// $conn = new mysqli("localhost", "root", "", "capstone_tpa");
+// if ($conn->connect_error) {
+//     die("Connection failed: " . $conn->connect_error);
+// }
+// Sertakan file koneksi
+include '../includes/koneksi.php';
 
 // Ambil bulan yang difilter dari parameter GET
 $filter_month = isset($_GET['filter_month']) ? $_GET['filter_month'] : '';

@@ -67,92 +67,93 @@ session_regenerate_id(true);
                         </thead>
                         <tbody>
                         <?php
-                        $conn = new mysqli("localhost", "root", "", "capstone_tpa");
-                        if ($conn->connect_error) {
-                            die("Koneksi gagal: " . $conn->connect_error);
-                        }
+                            // $conn = new mysqli("localhost", "root", "", "capstone_tpa");
+                            // if ($conn->connect_error) {
+                            //     die("Koneksi gagal: " . $conn->connect_error);
+                            // }
+                            include '../includes/koneksi.php';
 
-                        // Proses UPDATE data
-                        if (isset($_POST['update'])) {
-                            $id = $_POST['id'];
-                            $jenis = $_POST['jenis'];
-                            $deskripsi = $_POST['deskripsi'];
-                            $jumlah = $_POST['jumlah'];
-                            $date = $_POST['date'];
+                            // Proses UPDATE data
+                            if (isset($_POST['update'])) {
+                                $id = $_POST['id'];
+                                $jenis = $_POST['jenis'];
+                                $deskripsi = $_POST['deskripsi'];
+                                $jumlah = $_POST['jumlah'];
+                                $date = $_POST['date'];
 
-                            $sql = "UPDATE pemasukan_pengeluaran SET 
-                                    jenis = '$jenis', 
-                                    deskripsi = '$deskripsi',
-                                    jumlah = '$jumlah',
-                                    tanggal = '$date'
-                                    WHERE id = '$id'";
+                                $sql = "UPDATE pemasukan_pengeluaran SET 
+                                        jenis = '$jenis', 
+                                        deskripsi = '$deskripsi',
+                                        jumlah = '$jumlah',
+                                        tanggal = '$date'
+                                        WHERE id = '$id'";
 
-                            if ($conn->query($sql) === TRUE) {
-                                echo "<script>
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Berhasil',
-                                        text: 'Data berhasil diperbarui'
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.href = '';
-                                        }
-                                    });
-                                </script>";
+                                if ($conn->query($sql) === TRUE) {
+                                    echo "<script>
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Berhasil',
+                                            text: 'Data berhasil diperbarui'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = '';
+                                            }
+                                        });
+                                    </script>";
+                                } else {
+                                    echo "Error: " . $conn->error;
+                                }
+                            }
+
+                            // Fungsi DELETE
+                            if (isset($_POST['delete'])) {
+                                $id = $_POST['id'];
+                                $stmt = $conn->prepare("DELETE FROM pemasukan_pengeluaran WHERE id = ?");
+                                $stmt->bind_param("i", $id);
+                                if ($stmt->execute()) {
+                                    echo "<script>Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data berhasil dihapus'}).then((result) => {if (result.isConfirmed) {window.location.href = '';}});</script>";
+                                } else {
+                                    echo "Error: " . $conn->error;
+                                }
+                                $stmt->close();
+                            }
+                            
+
+                            // Filter data berdasarkan bulan
+                            $sql = "SELECT * FROM pemasukan_pengeluaran where jenis = 'pengeluaran'";
+                            if (isset($_GET['filter_month'])) {
+                                $filter_month = $_GET['filter_month'];
+                                $sql .= " WHERE DATE_FORMAT(tanggal, '%Y-%m') = '$filter_month'";
+                            }
+
+                            $result = $conn->query($sql);
+                            $no = 1;
+                            $totalJumlah = 0;
+
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td>" . $no++ . "</td>";
+                                    echo "<td>" . $row['jenis'] . "</td>";
+                                    echo "<td>" . $row['deskripsi'] . "</td>";
+                                    echo "<td>" . $row['jumlah'] . "</td>";
+                                    echo "<td>" . $row['tanggal'] . "</td>";
+                                    echo "<td>";
+                                    echo "<button class='btn btn-warning' onclick='editData(" . json_encode($row) . ")'>Update</button> ";
+                                    echo "<form method='POST' style='display:inline;' onSubmit='return confirmDelete(this)'>";
+                                    echo "<input type='hidden' name='id' value='" . $row['id'] . "'>";
+                                    echo "<button type='submit' name='delete' class='btn btn-danger'>Delete</button>";
+                                    echo "</form>";
+                                    echo "</td>";
+                                    echo "</tr>";
+
+                                    // Hitung total pemasukan dan pengeluaran
+                                    $totalJumlah += $row['jumlah'];
+                                }
                             } else {
-                                echo "Error: " . $conn->error;
+                                echo "<tr><td colspan='7' class='text-center'>Tidak ada data</td></tr>";
                             }
-                        }
-
-                        // Fungsi DELETE
-                        if (isset($_POST['delete'])) {
-                            $id = $_POST['id'];
-                            $stmt = $conn->prepare("DELETE FROM pemasukan_pengeluaran WHERE id = ?");
-                            $stmt->bind_param("i", $id);
-                            if ($stmt->execute()) {
-                                echo "<script>Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data berhasil dihapus'}).then((result) => {if (result.isConfirmed) {window.location.href = '';}});</script>";
-                            } else {
-                                echo "Error: " . $conn->error;
-                            }
-                            $stmt->close();
-                        }
-                        
-
-                        // Filter data berdasarkan bulan
-                        $sql = "SELECT * FROM pemasukan_pengeluaran where jenis = 'pengeluaran'";
-                        if (isset($_GET['filter_month'])) {
-                            $filter_month = $_GET['filter_month'];
-                            $sql .= " WHERE DATE_FORMAT(tanggal, '%Y-%m') = '$filter_month'";
-                        }
-
-                        $result = $conn->query($sql);
-                        $no = 1;
-                        $totalJumlah = 0;
-
-                        if ($result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                echo "<tr>";
-                                echo "<td>" . $no++ . "</td>";
-                                echo "<td>" . $row['jenis'] . "</td>";
-                                echo "<td>" . $row['deskripsi'] . "</td>";
-                                echo "<td>" . $row['jumlah'] . "</td>";
-                                echo "<td>" . $row['tanggal'] . "</td>";
-                                echo "<td>";
-                                echo "<button class='btn btn-warning' onclick='editData(" . json_encode($row) . ")'>Update</button> ";
-                                echo "<form method='POST' style='display:inline;' onSubmit='return confirmDelete(this)'>";
-                                echo "<input type='hidden' name='id' value='" . $row['id'] . "'>";
-                                echo "<button type='submit' name='delete' class='btn btn-danger'>Delete</button>";
-                                echo "</form>";
-                                echo "</td>";
-                                echo "</tr>";
-
-                                // Hitung total pemasukan dan pengeluaran
-                                $totalJumlah += $row['jumlah'];
-                            }
-                        } else {
-                            echo "<tr><td colspan='7' class='text-center'>Tidak ada data</td></tr>";
-                        }
-                        $conn->close();
+                            $conn->close();
                         ?>
                         </tbody>
                         <!-- Menampilkan Total Pemasukan dan Pengeluaran -->

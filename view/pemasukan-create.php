@@ -33,11 +33,12 @@ session_regenerate_id(true);
                 
                 <?php
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    $conn = new mysqli("localhost", "root", "", "capstone_tpa");
+                    // $conn = new mysqli("localhost", "root", "", "capstone_tpa");
 
-                    if ($conn->connect_error) {
-                        die("Koneksi gagal: " . $conn->connect_error);
-                    }
+                    // if ($conn->connect_error) {
+                    //     die("Koneksi gagal: " . $conn->connect_error);
+                    // }
+                    include '../includes/koneksi.php';
 
                     // Ambil data dari form
                     $jenis = $_POST['jenis'];

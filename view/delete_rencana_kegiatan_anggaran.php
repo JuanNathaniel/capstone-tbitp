@@ -17,19 +17,21 @@ session_regenerate_id(true);
 if (isset($_GET['id'])) {
     $idToDelete = $_GET['id'];
 
-    // Koneksi ke database
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "capstone_tpa"; // Nama database
+    // // Koneksi ke database
+    // $servername = "localhost";
+    // $username = "root";
+    // $password = "";
+    // $dbname = "capstone_tpa"; // Nama database
 
-    // Membuat koneksi
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    // // Membuat koneksi
+    // $conn = new mysqli($servername, $username, $password, $dbname);
 
-    // Memeriksa koneksi
-    if ($conn->connect_error) {
-        die("Koneksi gagal: " . $conn->connect_error);
-    }
+    // // Memeriksa koneksi
+    // if ($conn->connect_error) {
+    //     die("Koneksi gagal: " . $conn->connect_error);
+    // }
+    // Sertakan file koneksi
+    include '../includes/koneksi.php';
 
     // Query untuk mengambil nama file dari database berdasarkan ID
     $sql = "SELECT pengumpulan_dokumen FROM rencana_kegiatan_anggaran WHERE id = '$idToDelete'";

@@ -2,19 +2,21 @@
 // Include FPDF and PDF generator functions
 require 'pdf_generator.php';
 
-// Database connection details
-$host = 'localhost';
-$dbname = 'capstone_tpa';
-$username = 'root';
-$password = '';
+// // Database connection details
+// $host = 'localhost';
+// $dbname = 'capstone_tpa';
+// $username = 'root';
+// $password = '';
 
-// Connect to the database
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
-}
+// // Connect to the database
+// try {
+//     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+//     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// } catch (PDOException $e) {
+//     die("Connection failed: " . $e->getMessage());
+// }
+// Sertakan file koneksi
+include '../includes/koneksi.php';
 
 // Set the title and header for the PDF
 $title = 'Absensi Datang dan Jemput';
