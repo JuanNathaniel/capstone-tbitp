@@ -10,20 +10,8 @@ if (!isset($_SESSION['admin_id'])) {
 // Regenerasi ID sesi untuk keamanan ekstra
 session_regenerate_id(true);
 ?>
+
 <?php
-// // Koneksi ke database
-// $servername = "localhost";
-// $username = "root";
-// $password = "";
-// $dbname = "capstone_tpa"; // Ganti dengan nama database Anda
-
-// // Membuat koneksi
-// $conn = new mysqli($servername, $username, $password, $dbname);
-
-// // Memeriksa koneksi
-// if ($conn->connect_error) {
-//     die("Koneksi gagal: " . $conn->connect_error);
-// }
 // Sertakan file koneksi
 include '../includes/koneksi.php';
 
@@ -34,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $jam_datang = $_POST['jam_datang'];
     $jam_pulang = $_POST['jam_pulang'];
     $keterangan = $_POST['keterangan'];
-    $tanda_tangan = $_POST['tanda_tangan'];
+    $tanda_tangan = isset($_POST['tanda_tangan']) ? 1 : 0; // Checkbox untuk tanda tangan
     $tanggal = $_POST['tanggal'];
 
     // Validasi input, pastikan tidak kosong
@@ -124,10 +112,11 @@ $conn->close();
                         <label for="keterangan" class="form-label">Keterangan</label>
                         <input type="text" class="form-control" id="keterangan" name="keterangan" required>
                     </div>
-                    <!-- Input Keterangan -->
+                    
+                    <!-- Input Tanda Tangan -->
                     <div class="mb-3">
-                        <label for="tandatangan" class="form-label">Tanda tangan</label>
-                        <input type="text" class="form-control" id="tanda_tangan" name="tanda tangan" required>
+                        <label for="tanda_tangan" class="form-label">Tanda Tangan</label>
+                        <input type="checkbox" class="form-check-input" id="tanda_tangan" name="tanda_tangan">
                     </div>
 
                     <!-- Input Tanggal -->

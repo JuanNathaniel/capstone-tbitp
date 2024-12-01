@@ -4,56 +4,45 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home</title>
-    <link href="../scss/custom.scss" rel="stylesheet">
+    <title>Absensi Datang dan Jemput</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <style>
         .transition-bg {
-            background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
+            background: linear-gradient(to right, #344EAD, #1767A6);
+        }
+
+        .form-check {
+            margin: 0;
         }
     </style>
 </head>
 
 <body>
     <?php
-    // // Koneksi ke database
-    // $host = 'localhost';
-    // $dbname = 'capstone_tpa';
-    // $username = 'root';
-    // $password = '';
-
-    // try {
-    //     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    //     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    // } catch (PDOException $e) {
-    //     die("Koneksi gagal: " . $e->getMessage());
-    // }
-    // Sertakan file koneksi
     include '../includes/koneksi.php';
 
     // Hapus data jika tombol delete diklik
     if (isset($_GET['delete_id'])) {
-        $deleteId = $_GET['delete_id'];
+        $deleteId = intval($_GET['delete_id']);
         $deleteStmt = $pdo->prepare("DELETE FROM absensi_dan_jemput WHERE id = :id");
         $deleteStmt->bindParam(':id', $deleteId, PDO::PARAM_INT);
-        
+
         if ($deleteStmt->execute()) {
-            // Redirect jika berhasil dihapus
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
         } else {
-            echo "Penghapusan gagal. Silakan coba lagi.";
+            echo "<script>alert('Penghapusan gagal. Silakan coba lagi.');</script>";
         }
     }
 
     // Filter data berdasarkan tanggal
-    $filterDate = isset($_GET['filter_date']) ? $_GET['filter_date'] : date(' Y-m-d');
+    $filterDate = isset($_GET['filter_date']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['filter_date']) ? $_GET['filter_date'] : null;
 
-    // Query untuk mengambil data absensi dan jemput
+    // Query untuk mengambil data absensi
     $sql = "
         SELECT 
-            absen.id AS id,  
+            absen.id AS id,
             anak.nama AS nama_siswa,
             pengantar.nama_pengantar AS nama_pengantar,
             pengantar.jam_datang AS jam_datang,
@@ -71,51 +60,41 @@
             penjemput ON absen.id_penjemput = penjemput.id
     ";
 
-    // Menambahkan filter tanggal jika ada
+    // Tambahkan kondisi WHERE jika ada filter tanggal
     if ($filterDate) {
         $sql .= " WHERE DATE(absen.date) = :filterDate";
     }
 
-    // Menyiapkan dan menjalankan query
     $stmt = $pdo->prepare($sql);
-
-    // Bind parameter untuk filter tanggal jika ada
     if ($filterDate) {
         $stmt->bindParam(':filterDate', $filterDate);
     }
-
     $stmt->execute();
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     ?>
-
-
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
             <?php include 'sidebar.php'; ?>
-
-            <!-- Konten Utama -->
-            <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
+            <main class="col-md-9 col-lg-10 ms-auto">
                 <h2 class="bg-info rounded p-4 text-white transition-bg">Absensi Datang dan Jemput</h2>
+
                 <div class="container-fluid">
                     <div class="header d-flex justify-content-between align-items-center">
-                        <!-- Tombol Create -->
                         <a href="absendanPenjemputan-create.php" class="btn btn-primary">Create</a>
-<!-- Update the Download PDF button to pass the filter_date -->
-<a href="absensi_dan_jemput_pdf.php?filter_date=<?= htmlspecialchars($filterDate) ?>" class="btn btn-success">Download PDF</a>
-
+                        <a href="absensi_dan_jemput_pdf.php?filter_date=<?= htmlspecialchars($filterDate) ?>" class="btn btn-success">Download PDF</a>
                     </div>
 
-                    <!-- Form Filter Tanggal -->
                     <form method="GET" class="mt-3">
                         <div class="row">
                             <div class="col-md-4">
-                                <input type="date" name="filter_date" class="form-control" value="<?= htmlspecialchars($filterDate) ?>">
+                                <input type="date" name="filter_date" class="form-control" value="<?= htmlspecialchars($filterDate ?: date('Y-m-d')) ?>">
                             </div>
                             <div class="col-md-2">
                                 <button type="submit" class="btn btn-secondary">Filter</button>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="<?= $_SERVER['PHP_SELF'] ?>" class="btn btn-outline-secondary">Reset Filter</a>
                             </div>
                         </div>
                     </form>
@@ -142,14 +121,31 @@
                                     <td><?= htmlspecialchars($row['nama_siswa']) ?></td>
                                     <td><?= htmlspecialchars($row['nama_pengantar']) ?></td>
                                     <td><?= htmlspecialchars($row['jam_datang']) ?></td>
-                                    <td><?= htmlspecialchars($row['paraf_pengantar']) ?></td>
+                                    <td>
+                                        <div class="form-check d-flex justify-content-center">
+                                            <input class="form-check-input" type="checkbox" id="parafPengantar<?= $row['id'] ?>" <?= $row['paraf_pengantar'] ? 'checked' : '' ?> disabled>
+                                        </div>
+                                    </td>
                                     <td><?= htmlspecialchars($row['nama_penjemput']) ?></td>
                                     <td><?= htmlspecialchars($row['jam_jemput']) ?></td>
-                                    <td><?= htmlspecialchars($row['paraf_penjemput']) ?></td>
                                     <td>
-                                        <a href="absendanPenjemputan-update.php?id=<?= $row['id'] ?>" class="btn btn-warning">Edit</a>
-                                        <button class="btn btn-danger" onclick="confirmDelete(<?= $row['id'] ?>)">Delete</button>
+                                        <div class="form-check d-flex justify-content-center">
+                                            <input class="form-check-input" type="checkbox" id="parafPenjemput<?= $row['id'] ?>" <?= $row['paraf_penjemput'] ? 'checked' : '' ?> disabled>
+                                        </div>
                                     </td>
+                                    <td class="d-flex justify-content-around">
+                                        <!-- Edit Button with Icon -->
+                                        <a href="absendanPenjemputan-update.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm d-flex align-items-center w-100 justify-content-center">
+                                            <i class="bi bi-pencil-fill me-2"></i> Edit
+                                        </a>
+
+                                        <!-- Delete Button with Icon -->
+                                        <button class="btn btn-danger btn-sm d-flex align-items-center ms-2 w-100 justify-content-center" onclick="confirmDelete(<?= $row['id'] ?>)">
+                                            <i class="bi bi-trash-fill me-2"></i> Hapus
+                                        </button>
+                                    </td>
+
+
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -162,11 +158,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
     <script>
-        // Fungsi konfirmasi penghapusan
         function confirmDelete(id) {
             Swal.fire({
                 title: 'Apakah Anda yakin?',
-                text : "Data ini akan dihapus secara permanen!",
+                text: "Data ini akan dihapus secara permanen!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -181,38 +176,7 @@
         }
     </script>
 
-    <!-- Bootstrap JavaScript dan Ikon -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        // Pilih item dengan id "absensi"
-        document.getElementById('absensi').addEventListener('click', function(event) {
-            // Mencegah tindakan default jika link tidak memiliki URL di "href"
-            event.preventDefault();
-    
-            // Arahkan ke absendanpenjemputan.php
-            window.location.href = 'absendanpenjemputan.php';
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const dateInput = document.querySelector('input[name="filter_date"]');
-            
-            // Set nilai default ke tanggal hari ini jika belum diset
-            if (!dateInput.value) {
-                const today = new Date().toISOString().split('T')[0];
-                dateInput.value = today;
-            }
-            
-            // Periksa apakah URL sudah memiliki parameter "filter_date"
-            const urlParams = new URLSearchParams(window.location.search);
-            if (!urlParams.has('filter_date')) {
-                // Jika belum ada parameter "filter_date", kirim formulir secara otomatis
-                document.querySelector('form').submit();
-            }
-        });
-    </script>
-
 </body>
 
 </html>

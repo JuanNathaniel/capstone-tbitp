@@ -19,11 +19,17 @@ session_regenerate_id(true);
     <title>Create Data</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<style>
+    .transition-bg {
+        background: linear-gradient(to right, #344EAD, #1767A6);
+    }
+
+    .form-check {
+        margin: 0;
+    }
+</style>
 <body>
     <?php
-    // Database connection
-    // $pdo = new PDO("mysql:host=localhost;dbname=capstone_tpa", "root", "");
-    // Sertakan file koneksi
     include '../includes/koneksi.php';
 
     // Fetch list of anak
@@ -36,12 +42,12 @@ session_regenerate_id(true);
         $tanggal = $_POST['tanggal'];
         $nama_pengantar = $_POST['nama_pengantar'];
         $jam_datang = $_POST['jam_datang'];
-        $paraf_pengantar = $_POST['paraf_pengantar'];
+        $paraf_pengantar = isset($_POST['paraf_pengantar']) ? 1 : 0; // 1 jika checkbox dicentang
         $nama_penjemput = $_POST['nama_penjemput'];
         $jam_jemput = $_POST['jam_jemput'];
-        $paraf_penjemput = $_POST['paraf_penjemput'];
+        $paraf_penjemput = isset($_POST['paraf_penjemput']) ? 1 : 0; // 1 jika checkbox dicentang
 
-        // Insert data into 'pengantar' table
+        // Insert data ke tabel 'pengantar'
         $stmt_pengantar = $pdo->prepare("
             INSERT INTO pengantar (nama_pengantar, jam_datang, paraf) 
             VALUES (:nama_pengantar, :jam_datang, :paraf_pengantar)
@@ -53,7 +59,7 @@ session_regenerate_id(true);
         ]);
         $id_pengantar = $pdo->lastInsertId();
 
-        // Insert data into 'penjemput' table
+        // Insert data ke tabel 'penjemput'
         $stmt_penjemput = $pdo->prepare("
             INSERT INTO penjemput (nama_penjemput, jam_jemput, paraf) 
             VALUES (:nama_penjemput, :jam_jemput, :paraf_penjemput)
@@ -65,7 +71,7 @@ session_regenerate_id(true);
         ]);
         $id_penjemput = $pdo->lastInsertId();
 
-        // Insert data into 'absensi_dan_jemput' table with selected date
+        // Insert data ke tabel 'absensi_dan_jemput'
         $stmt_absensi = $pdo->prepare("
             INSERT INTO absensi_dan_jemput (id_anak, id_pengantar, id_penjemput, date)
             VALUES (:id_anak, :id_pengantar, :id_penjemput, :tanggal)
@@ -113,8 +119,9 @@ session_regenerate_id(true);
                 <input type="time" class="form-control" id="jam_datang" name="jam_datang" required>
             </div>
             <div class="mb-3">
-                <label for="paraf_pengantar" class="form-label">Paraf Pengantar</label>
-                <input type="text" class="form-control" id="paraf_pengantar" name="paraf_pengantar" required>
+                <label for="paraf_pengantar" class="form-label">Paraf Pengantar</label><br>
+                <input type="checkbox" id="paraf_pengantar" name="paraf_pengantar">
+                <label for="paraf_pengantar">Setujui</label>
             </div>
             <div class="mb-3">
                 <label for="nama_penjemput" class="form-label">Nama Penjemput</label>
@@ -125,8 +132,9 @@ session_regenerate_id(true);
                 <input type="time" class="form-control" id="jam_jemput" name="jam_jemput" required>
             </div>
             <div class="mb-3">
-                <label for="paraf_penjemput" class="form-label">Paraf Penjemput</label>
-                <input type="text" class="form-control" id="paraf_penjemput" name="paraf_penjemput" required>
+                <label for="paraf_penjemput" class="form-label">Paraf Penjemput</label><br>
+                <input type="checkbox" id="paraf_penjemput" name="paraf_penjemput">
+                <label for="paraf_penjemput">Setujui</label>
             </div>
             <button type="submit" class="btn btn-primary">Create</button>
             <a href="absendanPenjemputan.php" class="btn btn-secondary">Cancel</a>

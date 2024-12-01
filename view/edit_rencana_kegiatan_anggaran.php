@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nama_dokumen = $_POST['edit_nama_dokumen'];
     $tahun_anggaran = $_POST['edit_tahun_anggaran'];
     $keterangan = $_POST['edit_keterangan'];
-    $status = $_POST['edit_status'];
+    // $status = $_POST['edit_status'];
     $dokumen = $_POST['edit_dokumen']; // Jika ada file yang diedit
 
     // Query untuk mendapatkan file lama dari database
@@ -64,13 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (move_uploaded_file($fileTmpName, $uploadDir . $newFileName)) {
             // Update data termasuk file yang baru
             $sql = "UPDATE rencana_kegiatan_anggaran 
-                    SET nama_dokumen='$nama_dokumen', tahun_anggaran='$tahun_anggaran', keterangan='$keterangan', status='$status', pengumpulan_dokumen='$newFileName' 
+                    SET nama_dokumen='$nama_dokumen', tahun_anggaran='$tahun_anggaran', keterangan='$keterangan', pengumpulan_dokumen='$newFileName' 
                     WHERE id=$id";
         }
     } else {
         // Jika tidak ada file baru, cukup update data lain
         $sql = "UPDATE rencana_kegiatan_anggaran 
-                SET nama_dokumen='$nama_dokumen', tahun_anggaran='$tahun_anggaran', keterangan='$keterangan', status='$status' 
+                SET nama_dokumen='$nama_dokumen', tahun_anggaran='$tahun_anggaran', keterangan='$keterangan'
                 WHERE id=$id";
     }
 

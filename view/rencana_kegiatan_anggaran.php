@@ -166,7 +166,7 @@ session_regenerate_id(true);
                             <th scope="col">TAHUN ANGGARAN</th>
                             <th scope="col">PENGUMPULAN DOKUMEN</th>
                             <th scope="col">KETERANGAN</th>
-                            <th scope="col">STATUS</th>
+                            <!-- <th scope="col">STATUS</th> -->
                             <th scope="col">ACTION</th>
                         </tr>
                     </thead>
@@ -189,16 +189,16 @@ session_regenerate_id(true);
                                 }
                                 echo "<td>" . $row["keterangan"] . "</td>";
                                 
-                                // Tambahkan di sini untuk menampilkan status dengan enum
-                                echo "<td class='";
-                                if ($row["status"] == 'pending') {
-                                    echo 'status-pending'; 
-                                } elseif ($row["status"] == 'approved') {
-                                    echo 'status-approved'; 
-                                } elseif ($row["status"] == 'rejected') {
-                                    echo 'status-rejected'; 
-                                }
-                                echo "'>" . $row["status"] . "</td>";
+                                // // Tambahkan di sini untuk menampilkan status dengan enum
+                                // echo "<td class='";
+                                // if ($row["status"] == 'pending') {
+                                //     echo 'status-pending'; 
+                                // } elseif ($row["status"] == 'approved') {
+                                //     echo 'status-approved'; 
+                                // } elseif ($row["status"] == 'rejected') {
+                                //     echo 'status-rejected'; 
+                                // }
+                                // echo "'>" . $row["status"] . "</td>";
 
 
                                 echo "<td>
@@ -254,7 +254,7 @@ session_regenerate_id(true);
                             <input type="text" class="form-control" id="edit_keterangan" name="edit_keterangan">
                         </div>
 
-                        <!-- Status -->
+                        <!-- Status
                         <div class="mb-3">
                             <label for="edit_status" class="form-label">Status</label>
                             <select class="form-select" id="edit_status" name="edit_status" required>
@@ -262,7 +262,7 @@ session_regenerate_id(true);
                                 <option value="approved">Approved</option>
                                 <option value="rejected">Rejected</option>
                             </select>
-                        </div>
+                        </div> -->
 
                         <!-- Upload File Baru (Opsional) -->
                         <div class="mb-3">
@@ -312,14 +312,14 @@ session_regenerate_id(true);
                             <input type="text" class="form-control" id="keterangan" name="keterangan">
                         </div>
 
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label for="status" class="form-label">Status</label>
                             <select class="form-control" id="status" name="status" required>
                                 <option value="pending">Pending</option>
                                 <option value="approved">Approved</option>
                                 <option value="rejected">Rejected</option>
                             </select>
-                        </div>
+                        </div> -->
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -385,7 +385,7 @@ session_regenerate_id(true);
                 const nama_dokumen = this.getAttribute('data-nama-dokumen');
                 const tahun_anggaran = this.getAttribute('data-tahun-anggaran');
                 const keterangan = this.getAttribute('data-keterangan');
-                const status = this.getAttribute('data-status');
+                // const status = this.getAttribute('data-status');
                 const dokumen = this.getAttribute('data-dokumen'); // Nama file dokumen
 
                 // Isi modal dengan data yang didapat
@@ -393,7 +393,7 @@ session_regenerate_id(true);
                 document.getElementById('edit_nama_dokumen').value = nama_dokumen;
                 document.getElementById('edit_tahun_anggaran').value = tahun_anggaran;
                 document.getElementById('edit_keterangan').value = keterangan;
-                document.getElementById('edit_status').value = status;
+                // document.getElementById('edit_status').value = status;
                 document.getElementById('edit_dokumen').value = dokumen;  // Nama file dokumen
 
                 // Tampilkan modal
