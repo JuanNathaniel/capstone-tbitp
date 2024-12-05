@@ -30,18 +30,20 @@ class PDF extends FPDF
         $this->Ln(2);
 
         // Header tabel dengan warna
-        $this->SetFillColor(200, 220, 255);
+        $this->SetFillColor(200, 220, 255); // Warna header
         $this->SetFont('Arial', 'B', 10);
         foreach ($header as $col) {
-            $this->Cell($col['width'], 10, $col['label'], 1, 0, $col['align'], true);
+            $this->SetDrawColor(0, 0, 0); // Mengatur warna garis menjadi hitam
+            $this->Cell($col['width'], 10, $col['label'], 1, 0, $col['align'], true); // Header tetap berwarna
         }
         $this->Ln();
 
-        // Isi tabel
+        // Isi tabel tanpa warna
         $this->SetFont('Arial', '', 9);
         foreach ($data as $row) {
             foreach ($header as $col) {
                 $value = $row[$col['field']];
+                $this->SetDrawColor(0, 0, 0); // Mengatur warna garis menjadi hitam setiap kali menggambar cell
                 if ($col['field'] === 'tanda_tangan') {
                     // Gambar checkbox dengan centang atau silang
                     $x = $this->GetX();
@@ -51,12 +53,12 @@ class PDF extends FPDF
                     $this->Rect($x + 3, $y + 3, 4, 4, 'F'); // Kotak checkbox
                     if ($isPresent) {
                         // Centang
-                        $this->SetDrawColor(0, 128, 0);
+                        $this->SetDrawColor(0, 128, 0); // Warna garis centang hijau
                         $this->Line($x + 3.5, $y + 4.5, $x + 4.5, $y + 5.5); // Garis ke bawah
                         $this->Line($x + 4.5, $y + 5.5, $x + 6, $y + 3.5);   // Garis ke atas
                     } else {
                         // Silang
-                        $this->SetDrawColor(255, 0, 0);
+                        $this->SetDrawColor(255, 0, 0); // Warna garis silang merah
                         $this->Line($x + 3.5, $y + 3.5, $x + 6, $y + 6);     // Garis silang pertama
                         $this->Line($x + 6, $y + 3.5, $x + 3.5, $y + 6);     // Garis silang kedua
                     }
@@ -67,6 +69,7 @@ class PDF extends FPDF
             }
             $this->Ln();
         }
+
         $this->Ln(5); // Jarak antar tabel
     }
 }
