@@ -119,6 +119,7 @@ session_regenerate_id(true);
                 <div class="d-flex justify-content-between mb-3">
                     <div>
                         <button class="btn btn-primary" onclick="window.location.href='create_daftar_hadir_guru.php'">Create</button>
+                        <button class="btn btn-primary" onclick="window.location.href='daftar_hadir_guru_pdf.php'">Download PDF</button>
                     </div>
 
                     <div class="d-flex align-items-center filter-container">
