@@ -36,13 +36,15 @@
         }
     }
 
-    // Filter data berdasarkan tanggal
+    // Inisialisasi filter
     $filterDate = isset($_GET['filter_date']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['filter_date']) ? $_GET['filter_date'] : null;
+    $filterMonth = isset($_GET['filter_month']) && ctype_digit($_GET['filter_month']) ? intval($_GET['filter_month']) : null;
 
     // Query untuk mengambil data absensi
     $sql = "
         SELECT 
             absen.id AS id,
+            date AS date,
             anak.nama AS nama_siswa,
             pengantar.nama_pengantar AS nama_pengantar,
             pengantar.jam_datang AS jam_datang,
@@ -58,17 +60,34 @@
             pengantar ON absen.id_pengantar = pengantar.id
         INNER JOIN 
             penjemput ON absen.id_penjemput = penjemput.id
+        WHERE 1=1
     ";
 
-    // Tambahkan kondisi WHERE jika ada filter tanggal
+    // Tambahkan kondisi filter tanggal
     if ($filterDate) {
-        $sql .= " WHERE DATE(absen.date) = :filterDate";
+        $sql .= " AND DATE(absen.date) = :filterDate";
+    }
+
+    // Tambahkan kondisi filter bulan
+    if ($filterMonth) {
+        $currentYear = date('Y'); // Sesuaikan dengan tahun sekarang
+        $sql .= " AND MONTH(absen.date) = :filterMonth AND YEAR(absen.date) = :filterYear";
     }
 
     $stmt = $pdo->prepare($sql);
+
+    // Bind parameter untuk filter tanggal
     if ($filterDate) {
         $stmt->bindParam(':filterDate', $filterDate);
     }
+
+    // Bind parameter untuk filter bulan
+    if ($filterMonth) {
+        $currentYear = date('Y'); // Tahun sekarang
+        $stmt->bindParam(':filterMonth', $filterMonth, PDO::PARAM_INT);
+        $stmt->bindParam(':filterYear', $currentYear, PDO::PARAM_INT);
+    }
+
     $stmt->execute();
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
     ?>
@@ -82,23 +101,45 @@
                 <div class="container-fluid">
                     <div class="header d-flex justify-content-between align-items-center">
                         <a href="absendanPenjemputan-create.php" class="btn btn-primary">Create</a>
-                        <a href="absensi_dan_jemput_pdf.php?filter_date=<?= htmlspecialchars($filterDate) ?>" class="btn btn-success">Download PDF</a>
+                        <a href="absensi_dan_jemput_pdf.php?filter_date=<?= htmlspecialchars($filterDate) ?>&filter_month=<?= htmlspecialchars($filterMonth) ?>" class="btn btn-success">Download PDF</a>
                     </div>
 
+                    <!-- Form Filter -->
                     <form method="GET" class="mt-3">
                         <div class="row">
-                            <div class="col-md-4">
-                                <input type="date" name="filter_date" class="form-control" value="<?= htmlspecialchars($filterDate ?: date('Y-m-d')) ?>">
+                            <!-- Filter Tanggal -->
+                            <div class="col-md-5">
+                                <label for="filter_date" class="form-label">Filter Tanggal:</label>
+                                <div class="input-group">
+                                    <input type="date" name="filter_date" id="filter_date" class="form-control">
+                                    <button type="submit" class="btn btn-secondary">Filter Tanggal</button>
+                                </div>
                             </div>
-                            <div class="col-md-2">
-                                <button type="submit" class="btn btn-secondary">Filter</button>
+
+                            <!-- Filter Bulan -->
+                            <div class="col-md-5">
+                                <label for="filter_month" class="form-label">Filter Bulan:</label>
+                                <div class="input-group">
+                                    <select name="filter_month" id="filter_month" class="form-select">
+                                        <option value="">Pilih Bulan</option>
+                                        <?php
+                                        for ($i = 1; $i <= 12; $i++) {
+                                            $selected = isset($_GET['filter_month']) && intval($_GET['filter_month']) === $i ? 'selected' : '';
+                                            echo "<option value=\"$i\" $selected>" . date('F', mktime(0, 0, 0, $i, 1)) . "</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                    <button type="submit" class="btn btn-secondary">Filter Bulan</button>
+                                </div>
                             </div>
-                            <div class="col-md-2">
-                                <a href="<?= $_SERVER['PHP_SELF'] ?>" class="btn btn-outline-secondary">Reset Filter</a>
+
+                            <div class="col-md-2 d-flex align-items-end">
+                                <a href="<?= $_SERVER['PHP_SELF'] ?>" class="btn btn-outline-secondary w-100">Reset Filter</a>
                             </div>
                         </div>
                     </form>
 
+                    <!-- Tabel Data -->
                     <div class="content mt-4">
                         <table class="table table-bordered text-center">
                             <thead>
@@ -111,6 +152,7 @@
                                     <th>Nama (Penjemput)</th>
                                     <th>Jam Jemput (Penjemput)</th>
                                     <th>Paraf (Penjemput)</th>
+                                    <th>Tanggal</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -133,19 +175,11 @@
                                             <input class="form-check-input" type="checkbox" id="parafPenjemput<?= $row['id'] ?>" <?= $row['paraf_penjemput'] ? 'checked' : '' ?> disabled>
                                         </div>
                                     </td>
+                                    <td><?= htmlspecialchars($row['date']) ?></td>
                                     <td class="d-flex justify-content-around">
-                                        <!-- Edit Button with Icon -->
-                                        <a href="absendanPenjemputan-update.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm d-flex align-items-center w-100 justify-content-center">
-                                            <i class="bi bi-pencil-fill me-2"></i> Edit
-                                        </a>
-
-                                        <!-- Delete Button with Icon -->
-                                        <button class="btn btn-danger btn-sm d-flex align-items-center ms-2 w-100 justify-content-center" onclick="confirmDelete(<?= $row['id'] ?>)">
-                                            <i class="bi bi-trash-fill me-2"></i> Hapus
-                                        </button>
+                                        <a href="absendanPenjemputan-update.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
+                                        <button class="btn btn-danger btn-sm" onclick="confirmDelete(<?= $row['id'] ?>)">Hapus</button>
                                     </td>
-
-
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>

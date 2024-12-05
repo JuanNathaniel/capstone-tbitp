@@ -10,15 +10,14 @@ if (!isset($_SESSION['admin_id'])) {
 // Regenerasi ID sesi untuk keamanan ekstra
 session_regenerate_id(true);
 ?>
-<?php
-// // Koneksi ke database
-// $conn = new mysqli("localhost", "root", "", "capstone_tpa");
 
-// if ($conn->connect_error) {
-//     die("Connection failed: " . $conn->connect_error);
-// }
-// Sertakan file koneksi
-include '../includes/koneksi.php';
+<?php
+// Koneksi ke database
+$conn = new mysqli("localhost", "root", "", "capstone_tpa");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 // Menangani proses update data
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
@@ -32,12 +31,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     $infaq = $_POST['infaq'] ?? 0;
     $keterangan = $_POST['keterangan'] ?? '';
 
-    // Update data ke database
-    $sql = "UPDATE laporan_dana SET pendaftaran='$pendaftaran', spp_bulan='$spp_bulan', seragam='$seragam',
-            pengembangan_sekolah='$pengembangan_sekolah', kegiatan_pembelajaran='$kegiatan_pembelajaran', keterlambatan='$keterlambatan', infaq='$infaq', 
-            keterangan='$keterangan' WHERE id='$id'";
+    // Validasi apakah ada perubahan data sebelum menyimpan ke history
+    $sql_check = "SELECT * FROM laporan_dana WHERE id='$id'";
+    $result_check = $conn->query($sql_check);
+    $data_lama = $result_check->fetch_assoc();
 
-    if ($conn->query($sql) === TRUE) {
+    if (
+        $data_lama['pendaftaran'] != $pendaftaran ||
+        $data_lama['spp_bulan'] != $spp_bulan ||
+        $data_lama['seragam'] != $seragam ||
+        $data_lama['pengembangan_sekolah'] != $pengembangan_sekolah ||
+        $data_lama['kegiatan_pembelajaran'] != $kegiatan_pembelajaran ||
+        $data_lama['keterlambatan'] != $keterlambatan ||
+        $data_lama['infaq'] != $infaq ||
+        $data_lama['keterangan'] != $keterangan
+    ) {
+        // Simpan data lama ke tabel history
+        $sql_history = "INSERT INTO laporan_dana_history (nama, pendaftaran, spp_bulan, seragam, pengembangan_sekolah, kegiatan_pembelajaran, keterlambatan, infaq, keterangan, date)
+                        SELECT nama, pendaftaran, spp_bulan, seragam, pengembangan_sekolah, kegiatan_pembelajaran, keterlambatan, infaq, keterangan, CURDATE()
+                        FROM laporan_dana WHERE id='$id'";
+        $conn->query($sql_history);
+    }
+
+    // Update data ke database
+    $sql_update = "UPDATE laporan_dana 
+                   SET pendaftaran='$pendaftaran', spp_bulan='$spp_bulan', seragam='$seragam', 
+                       pengembangan_sekolah='$pengembangan_sekolah', kegiatan_pembelajaran='$kegiatan_pembelajaran', 
+                       keterlambatan='$keterlambatan', infaq='$infaq', keterangan='$keterangan' 
+                   WHERE id='$id'";
+
+    if ($conn->query($sql_update) === TRUE) {
         echo "Data berhasil diperbarui";
     } else {
         echo "Error: " . $conn->error;
@@ -48,10 +71,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
 if (isset($_POST['delete_id'])) {
     $id = $_POST['delete_id'];
 
-    // Menghapus data dari database
-    $sql = "DELETE FROM laporan_dana WHERE id='$id'";
+    // Simpan data lama ke laporan_dana_history
+    $sql_history = "INSERT INTO laporan_dana_history (id, nama, pendaftaran, spp_bulan, seragam, pengembangan_sekolah, kegiatan_pembelajaran, keterlambatan, infaq, keterangan, date)
+                    SELECT id, nama, pendaftaran, spp_bulan, seragam, pengembangan_sekolah, kegiatan_pembelajaran, keterlambatan, infaq, keterangan, CURDATE()
+                    FROM laporan_dana WHERE id='$id'";
+    $conn->query($sql_history);
 
-    if ($conn->query($sql) === TRUE) {
+    // Menghapus data dari database
+    $sql_delete = "DELETE FROM laporan_dana WHERE id='$id'";
+
+    if ($conn->query($sql_delete) === TRUE) {
         echo "Data berhasil dihapus";
     } else {
         echo "Error: " . $conn->error;
@@ -64,9 +93,15 @@ $sql = "SELECT laporan_dana.*, anak.nama AS nama_siswa
         JOIN anak ON laporan_dana.nama = anak.id";
 $result = $conn->query($sql);
 
+$sql_history = "SELECT laporan_dana_history.*, anak.nama AS nama_siswa 
+                FROM laporan_dana_history 
+                JOIN anak ON laporan_dana_history.nama = anak.id";
+$result_history = $conn->query($sql_history);
+
 // Inisialisasi variabel untuk menghitung total di setiap kolom
 $total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_kegiatan = $total_keterlambatan =  $total_infaq = $grand_total = 0;
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -89,7 +124,7 @@ $total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_
 
             <!-- Konten Utama -->
             <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
-                <h2 class="bg-info rounded p-4 text-white transition-bg">Tabel Laporan Dana</h2>
+            <h2 class="bg-info rounded p-4 text-white transition-bg">Tabel Laporan Dana</h2>
 
 
         

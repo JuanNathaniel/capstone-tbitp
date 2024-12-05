@@ -30,18 +30,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     $kegiatan_pembelajaran = $_POST['kegiatan_pembelajaran'] ?? 0;
     $keterlambatan = $_POST['keterlambatan'] ?? 0;
     $infaq = $_POST['infaq'] ?? 0;
+    $date = $_POST['date'];
     $keterangan = $_POST['keterangan'] ?? '';
 
     // Menyimpan data ke database
-    $sql = "INSERT INTO laporan_dana (nama, pendaftaran, spp_bulan, seragam, pengembangan_sekolah, kegiatan_pembelajaran,keterlambatan, infaq, keterangan)
-            VALUES ('$nama', '$pendaftaran', '$spp_bulan', '$seragam', '$pengembangan_sekolah', '$kegiatan_pembelajaran','$keterlambatan', '$infaq', '$keterangan')";
+$sql = "INSERT INTO laporan_dana (nama, pendaftaran, spp_bulan, seragam, pengembangan_sekolah, kegiatan_pembelajaran, keterlambatan, infaq, keterangan, date)
+        VALUES ('$nama', '$pendaftaran', '$spp_bulan', '$seragam', '$pengembangan_sekolah', '$kegiatan_pembelajaran', '$keterlambatan', '$infaq', '$keterangan', '$date')";
 
     if ($conn->query($sql) === TRUE) {
-        echo "Data berhasil disimpan";
+    header("Location: laporan_dana.php?message=success");
     } else {
-        echo "Error: " . $conn->error;
+    echo "<div class='alert alert-danger'>Error: " . $conn->error . "</div>";
     }
+
+    if (empty($nama) || empty($date)) {
+    echo "Nama dan tanggal tidak boleh kosong.";
+    exit();
 }
+
+if ($pendaftaran < 0 || $spp_bulan < 0 || $seragam < 0 || $pengembangan_sekolah < 0 || $kegiatan_pembelajaran < 0 || $keterlambatan < 0 || $infaq < 0) {
+    echo "Angka harus bernilai positif.";
+    exit();
+}
+
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -117,6 +131,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
                 <label for="keterangan" class="form-label">Keterangan</label>
                 <textarea name="keterangan" class="form-control" id="keterangan"></textarea>
             </div>
+            <div class="mb-3">
+    <label for="date" class="form-label">Tanggal</label>
+    <input type="date" name="date" class="form-control" id="date" required>
+</div>
+
 
             <button type="submit" name="submit" class="btn btn-primary">Simpan Data</button>
             <a href="laporan_dana.php" class="btn btn-secondary">Kembali</a>
