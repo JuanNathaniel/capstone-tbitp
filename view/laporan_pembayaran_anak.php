@@ -281,6 +281,12 @@ foreach ($currentData as $row) {
         </div>
     </div>
 </form>
+
+<br>
+<a href="laporan_pembayaran_anak_pdf.php?bulan=<?= $bulan ?>&tahun=<?= $tahun ?>" 
+       class="btn btn-success">
+        Download Laporan PDF
+    </a>
 <hr>
 
 
