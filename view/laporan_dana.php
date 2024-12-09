@@ -126,8 +126,6 @@ $total_pendaftaran = $total_spp = $total_seragam = $total_pengembangan = $total_
             <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
             <h2 class="bg-info rounded p-4 text-white transition-bg">Tabel Laporan Dana</h2>
 
-
-        
         <a href="laporan_dana-create.php" class="btn btn-success mb-4">Tambah Data</a>
         <a href="laporan_dana_pdf.php" class="btn btn-success">Download PDF</a>
 

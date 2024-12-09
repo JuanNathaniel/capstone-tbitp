@@ -9,18 +9,7 @@ if (!isset($_SESSION['admin_id'])) {
 
 // Regenerasi ID sesi untuk keamanan ekstra
 session_regenerate_id(true);
-?>
-<?php
-// // Koneksi ke database
-// $host = 'localhost';
-// $username = 'root';
-// $password = '';
-// $dbname = 'capstone_tpa';
-// $conn = new mysqli($host, $username, $password, $dbname);
 
-// if ($conn->connect_error) {
-//     die("Connection failed: " . $conn->connect_error);
-// }
 include '../includes/koneksi.php';
 
 // Mendapatkan id_anak dari URL atau AJAX
@@ -46,67 +35,32 @@ if ($anakResult && $anakResult->num_rows > 0) {
 
 // Mengambil data dari laporan_dana dan rekapitulasi_pembayaran berdasarkan id_anak
 if (isset($_GET['action']) && $_GET['action'] == 'load_data') {
-    $query = "
-        SELECT 
-            'Pendaftaran' AS jenis_pembayaran, 
-            ld.pendaftaran AS jumlah, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Pendaftaran'
-        WHERE ld.nama = $id_anak
-        UNION ALL
-        SELECT 
-            'SPP Bulan', 
-            ld.spp_bulan, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'SPP Bulan'
-        WHERE ld.nama = $id_anak
-        UNION ALL
-        SELECT 
-            'Seragam', 
-            ld.seragam, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Seragam'
-        WHERE ld.nama = $id_anak
-        UNION ALL
-        SELECT 
-            'Pengembangan Sekolah', 
-            ld.pengembangan_sekolah, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Pengembangan Sekolah'
-        WHERE ld.nama = $id_anak
-        UNION ALL
-        SELECT 
-            'Kegiatan Pembelajaran', 
-            ld.kegiatan_pembelajaran, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Kegiatan Pembelajaran'
-        WHERE ld.nama = $id_anak
-        UNION ALL
-        SELECT 
-            'Keterlambatan', 
-            ld.keterlambatan AS jumlah, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Keterlambatan'
-        WHERE ld.nama = $id_anak
-    ";
+    
+    $query = "SELECT * FROM rekapitulasi_pembayaran WHERE id_anak = $id_anak";
+    //     SELECT 
+    //         rp.jenis_pembayaran,
+    //         COALESCE(ld.jumlah, 0) AS jumlah, 
+    //         rp.cicilan_1, 
+    //         rp.cicilan_2, 
+    //         rp.keterangan
+    //     FROM (
+    //         SELECT 'Pendaftaran' AS jenis_pembayaran, pendaftaran AS jumlah FROM laporan_dana WHERE nama = $id_anak
+    //         UNION ALL
+    //         SELECT 'SPP Bulan', spp_bulan FROM laporan_dana WHERE nama = $id_anak
+    //         UNION ALL
+    //         SELECT 'Seragam', seragam FROM laporan_dana WHERE nama = $id_anak
+    //         UNION ALL
+    //         SELECT 'Pengembangan Sekolah', pengembangan_sekolah FROM laporan_dana WHERE nama = $id_anak
+    //         UNION ALL
+    //         SELECT 'Kegiatan Pembelajaran', kegiatan_pembelajaran FROM laporan_dana WHERE nama = $id_anak
+    //         UNION ALL
+    //         SELECT 'Keterlambatan', keterlambatan FROM laporan_dana WHERE nama = $id_anak
+    //     ) AS ld
+    //     LEFT JOIN rekapitulasi_pembayaran rp 
+    //         ON ld.jenis_pembayaran = rp.jenis_pembayaran
+    //         AND rp.id_anak = $id_anak
+    // ";
+
 
     $result = $conn->query($query);
 
@@ -131,28 +85,203 @@ if (isset($_GET['action']) && $_GET['action'] == 'load_data') {
     exit;
 }
 
-// Update records in rekapitulasi_pembayaran
+// if (isset($_POST['action']) && $_POST['action'] == 'save_data_lainnya') {
+//     $cicilan_1 = $_POST['cicilan_1'];
+//     $cicilan_2 = $_POST['cicilan_2'];
+//     $keterangan = $_POST['keterangan'];
+//     $jenis_pembayaran = $_POST['jenis_pembayaran'];
+
+//     $stmt = $conn->prepare("INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, cicilan_1, cicilan_2, keterangan) VALUES (?, ?, ?, ?, ?)");
+//     $stmt->bind_param("isiis", $id_anak, $jenis, $cicilan_1, $cicilan_2, $keterangan);
+//     if (!$stmt->execute()) {
+//         echo "Error: " . $stmt->error;
+//         exit();
+//     }
+
+//     echo "Data berhasil disimpan!". $jenis_pembayaran;
+//     exit;
+// }
+
+// // Simpan data rekapitulasi pembayaran
+// if (isset($_POST['action']) && $_POST['action'] == 'save_data') {
+//     $cicilan_1 = $_POST['cicilan_1'];
+//     $cicilan_2 = $_POST['cicilan_2'];
+//     $keterangan = $_POST['keterangan'];
+
+//     foreach ($cicilan_1 as $jenis => $cicil1) {
+//         $cicil2 = isset($cicilan_2[$jenis]) ? $cicilan_2[$jenis] : 0;
+//         $ket = isset($keterangan[$jenis]) ? $keterangan[$jenis] : '';
+
+//         // Cek apakah data sudah ada di database
+//         $checkQuery = "SELECT * FROM rekapitulasi_pembayaran WHERE id_anak = ? AND jenis_pembayaran = ?";
+//         $checkStmt = $conn->prepare($checkQuery);
+//         $checkStmt->bind_param("is", $id_anak, $jenis);
+//         $checkStmt->execute();
+//         $checkResult = $checkStmt->get_result();
+
+//         if ($checkResult->num_rows > 0) {
+//             // Data sudah ada, lakukan update
+//             $stmt = $conn->prepare("UPDATE rekapitulasi_pembayaran SET cicilan_1 = ?, cicilan_2 = ?, keterangan = ? WHERE id_anak = ? AND jenis_pembayaran = ?");
+//             $stmt->bind_param("iisis", $cicil1, $cicil2, $ket, $id_anak, $jenis);
+//             if (!$stmt->execute()) {
+//                 echo "Error: " . $stmt->error;
+//                 exit();
+//             }
+//         } else {
+//             // Data belum ada, lakukan insert
+//             $stmt = $conn->prepare("INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, cicilan_1, cicilan_2, keterangan) VALUES (?, ?, ?, ?, ?)");
+//             $stmt->bind_param("isiis", $id_anak, $jenis, $cicil1, $cicil2, $ket);
+//             if (!$stmt->execute()) {
+//                 echo "Error: " . $stmt->error;
+//                 exit();
+//             }
+//         }
+//     }
+
+//     echo "Data berhasil disimpan!";
+//     exit;
+// }
+// if (isset($_POST['action']) && $_POST['action'] == 'save_data_lainnya') {
+//     $cicilan_1 = $_POST['cicilan_1'];
+//     $cicilan_2 = $_POST['cicilan_2'];
+//     $keterangan = $_POST['keterangan'];
+//     $jenis_pembayaran = $_POST['jenis_pembayaran'];
+//     $id_anak = $_POST['id_anak']; // Pastikan id_anak diterima dari form.
+
+//     // Mengecek apakah jenis_pembayaran terisi
+//     if (!empty($jenis_pembayaran)) {
+//         // Simpan data jenis pembayaran baru
+//         foreach ($jenis_pembayaran as $key => $jenis) {
+//             $jenis = isset($jenis_pembayaran[$key]) ? $jenis_pembayaran[$key] : 'tes';
+//             $cicil1 = isset($cicilan_1[$key]) ? $cicilan_1[$key] : 0;
+//             $cicil2 = isset($cicilan_2[$key]) ? $cicilan_2[$key] : 0;
+//             $ket = isset($keterangan[$key]) ? $keterangan[$key] : '';
+
+//             // Insert data rekapitulasi pembayaran baru
+//             $stmt = $conn->prepare("INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, cicilan_1, cicilan_2, keterangan) VALUES (?, ?, ?, ?, ?)");
+//             $stmt->bind_param("isiis", $id_anak, $jenis, $cicil1, $cicil2, $ket); // Perbaikan tipe data
+//             if (!$stmt->execute()) {
+//                 echo "Error: " . $stmt->error;
+//                 exit();
+//             }
+//         }
+//         echo "Data jenis pembayaran baru berhasil disimpan!";
+//     } else {
+//         echo "Jenis pembayaran tidak terisi.";
+//     }
+//     exit;
+// }
+
+
+// // Simpan data rekapitulasi pembayaran untuk baris yang sudah ada
+// if (isset($_POST['action']) && $_POST['action'] == 'save_data') {
+//     $cicilan_1 = $_POST['cicilan_1'];
+//     $cicilan_2 = $_POST['cicilan_2'];
+//     $keterangan = $_POST['keterangan'];
+
+//     // Loop untuk update data yang sudah ada
+//     foreach ($cicilan_1 as $jenis => $cicil1) {
+//         $cicil2 = isset($cicilan_2[$jenis]) ? $cicilan_2[$jenis] : 0;
+//         $ket = isset($keterangan[$jenis]) ? $keterangan[$jenis] : '';
+
+//         // Cek apakah data sudah ada di database
+//         $checkQuery = "SELECT * FROM rekapitulasi_pembayaran WHERE id_anak = ? AND jenis_pembayaran = ?";
+//         $checkStmt = $conn->prepare($checkQuery);
+//         $checkStmt->bind_param("is", $id_anak, $jenis);
+//         $checkStmt->execute();
+//         $checkResult = $checkStmt->get_result();
+
+//         if ($checkResult->num_rows > 0) {
+//             // Data sudah ada, lakukan update
+//             $stmt = $conn->prepare("UPDATE rekapitulasi_pembayaran SET cicilan_1 = ?, cicilan_2 = ?, keterangan = ? WHERE id_anak = ? AND jenis_pembayaran = ?");
+//             $stmt->bind_param("iisis", $cicil1, $cicil2, $ket, $id_anak, $jenis);
+//             if (!$stmt->execute()) {
+//                 echo "Error: " . $stmt->error;
+//                 exit();
+//             }
+//         } else {
+//             // Data belum ada, lakukan insert
+//             $stmt = $conn->prepare("INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, cicilan_1, cicilan_2, keterangan) VALUES (?, ?, ?, ?, ?)");
+//             $stmt->bind_param("isiis", $id_anak, $jenis, $cicil1, $cicil2, $ket);
+//             if (!$stmt->execute()) {
+//                 echo "Error: " . $stmt->error;
+//                 exit();
+//             }
+//         }
+//     }
+
+//     echo "Data berhasil disimpan!";
+//     exit;
+// }
+
+// Simpan data rekapitulasi pembayaran untuk baris yang sudah ada
 if (isset($_POST['action']) && $_POST['action'] == 'save_data') {
-    $id_anak = $_POST['id_anak'];
     $cicilan_1 = $_POST['cicilan_1'];
     $cicilan_2 = $_POST['cicilan_2'];
     $keterangan = $_POST['keterangan'];
+    
+    $id_anak = $_POST['id_anak']; // Pastikan id_anak diterima dari form.
+    
 
-    foreach ($cicilan_1 as $jenis => $cicil1) {
-        $cicil2 = $cicilan_2[$jenis] ?? 0;
-        $ket = $keterangan[$jenis] ?? '';
+    if (!empty($_POST['jenis_pembayaran'])) {
+        $jenis_pembayaran = $_POST['jenis_pembayaran'];
+        foreach ($jenis_pembayaran as $key => $jenis) {
+            $jenis = isset($jenis_pembayaran[$key]) ? $jenis_pembayaran[$key] : 'tes';
+            $cicil1 = isset($cicilan_1[$key]) ? $cicilan_1[$key] : 0;
+            $cicil2 = isset($cicilan_2[$key]) ? $cicilan_2[$key] : 0;
+            $ket = isset($keterangan[$key]) ? $keterangan[$key] : '';
 
-        $stmt = $conn->prepare("UPDATE rekapitulasi_pembayaran SET cicilan_1 = ?, cicilan_2 = ?, keterangan = ? WHERE id_anak = ? AND jenis_pembayaran = ?");
-        $stmt->bind_param("iisis", $cicil1, $cicil2, $ket, $id_anak, $jenis);
-        $stmt->execute();
+            // Insert data rekapitulasi pembayaran baru
+            $stmt = $conn->prepare("INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, cicilan_1, cicilan_2, keterangan) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("isiis", $id_anak, $jenis, $cicil1, $cicil2, $ket); // Perbaikan tipe data
+            if (!$stmt->execute()) {
+                echo "Error: " . $stmt->error;
+                exit();
+            }
+        }
+        echo "Data jenis pembayaran baru berhasil disimpan!";
+        exit();
+    } else {
+        // Loop untuk update data yang sudah ada
+        foreach ($cicilan_1 as $jenis => $cicil1) {
+            $cicil2 = isset($cicilan_2[$jenis]) ? $cicilan_2[$jenis] : 0;
+            $ket = isset($keterangan[$jenis]) ? $keterangan[$jenis] : '';
+
+            // Cek apakah data sudah ada di database
+            $checkQuery = "SELECT * FROM rekapitulasi_pembayaran WHERE id_anak = ? AND jenis_pembayaran = ?";
+            $checkStmt = $conn->prepare($checkQuery);
+            $checkStmt->bind_param("is", $id_anak, $jenis);
+            $checkStmt->execute();
+            $checkResult = $checkStmt->get_result();
+
+            if ($checkResult->num_rows > 0) {
+                // Data sudah ada, lakukan update
+                $stmt = $conn->prepare("UPDATE rekapitulasi_pembayaran SET cicilan_1 = ?, cicilan_2 = ?, keterangan = ? WHERE id_anak = ? AND jenis_pembayaran = ?");
+                $stmt->bind_param("iisis", $cicil1, $cicil2, $ket, $id_anak, $jenis);
+                if (!$stmt->execute()) {
+                    echo "Error: " . $stmt->error;
+                    exit();
+                }
+            } else {
+                // Data belum ada, lakukan insert
+                $stmt = $conn->prepare("INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, cicilan_1, cicilan_2, keterangan) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("isiis", $id_anak, $jenis, $cicil1, $cicil2, $ket);
+                if (!$stmt->execute()) {
+                    echo "Error: " . $stmt->error;
+                    exit();
+                }
+            }
+        }
+        echo "Data berhasil disimpan!";
+        exit;
     }
-
-    echo "Data berhasil disimpan!";
-    exit;
+    
 }
 
 
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -161,6 +290,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'save_data') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Rekapitulasi Pembayaran Anak</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .transition-bg {
+            background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
+        }
+    </style>
 </head>
 <body>
 
@@ -168,7 +302,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save_data') {
     <div class="row">
         <?php include 'sidebar.php'; ?>
         <main class="col-md-9 col-lg-10 ms-auto" style="margin-left: auto;">
-            <h2 class="bg-info rounded p-4 text-white">Detail Rekapitulasi Pembayaran</h2>
+            <h2 class="bg-info rounded p-4 text-white transition-bg">Detail Rekapitulasi Pembayaran</h2>
             <p><strong>Nama Anak:</strong> <?= htmlspecialchars($namaAnak) ?></p>
 
             <form id="paymentForm">
@@ -188,6 +322,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save_data') {
                 </table>
                 <button type="submit" class="btn btn-primary">Simpan</button>
                 <a href="rekapitulasi_anak_pdf.php?id_anak=<?= $id_anak ?>" class="btn btn-success">Download PDF</a>
+                <button type="button" id="addRowButton" class="btn btn-secondary">Tambah Pembayaran</button>
             </form>
         </main>
     </div>
@@ -199,6 +334,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'save_data') {
 
 <script>
 $(document).ready(function() {
+    let rowCount = 1; // Untuk menambahkan nomor baris yang unik
+
+    // Memuat data pembayaran yang sudah ada
     function loadPaymentData() {
         $.ajax({
             url: 'rekapitulasi_pembayaran_detail.php',
@@ -206,14 +344,50 @@ $(document).ready(function() {
             data: { id_anak: <?= $id_anak ?>, action: 'load_data' },
             success: function(data) {
                 $('#paymentTable').html(data);
+                rowCount = $('#paymentTable tr').length + 1; // Update row count setelah data dimuat
             }
         });
     }
 
+    // Fungsi untuk menambah baris pembayaran baru
+    function addRow() {
+        const newRow = `
+            <tr>
+                <td>${rowCount}</td>
+                <td><input type="text" name="jenis_pembayaran[]" class="form-control" required></td>
+                <td><input type="number" name="jumlah[]" class="form-control" required></td>
+                <td><input type="number" name="cicilan_1[]" class="form-control"></td>
+                <td><input type="number" name="cicilan_2[]" class="form-control"></td>
+                <td><span class="total_cicilan">0</span></td>
+                <td><input type="text" name="keterangan[]" class="form-control"></td>
+            </tr>
+        `;
+        $('#paymentTable').append(newRow);
+        rowCount++;
+    }
+
+    // Fungsi untuk menghitung total cicilan setiap baris
+    function calculateTotalCicilan() {
+        $('#paymentTable tr').each(function() {
+            const cicilan1 = parseFloat($(this).find('input[name^="cicilan_1"]').val()) || 0;
+            const cicilan2 = parseFloat($(this).find('input[name^="cicilan_2"]').val()) || 0;
+            const totalCicilan = cicilan1 + cicilan2;
+            $(this).find('.total_cicilan').text(totalCicilan);
+        });
+    }
+
+    // Event listener untuk tombol tambah baris
+    $('#addRowButton').click(function() {
+        addRow();
+    });
+
+    // Memuat data pembayaran ketika halaman pertama kali dimuat
     loadPaymentData();
 
-     $('#paymentForm').on('submit', function(e) {
+    // Event listener untuk submit form
+    $('#paymentForm').on('submit', function(e) {
         e.preventDefault();
+        calculateTotalCicilan(); // Hitung total cicilan sebelum submit
         $.ajax({
             url: 'rekapitulasi_pembayaran_detail.php',
             type: 'POST',
@@ -227,7 +401,13 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Update total cicilan setiap kali ada perubahan pada cicilan
+    $('#paymentTable').on('input', 'input[name^="cicilan_1"], input[name^="cicilan_2"]', function() {
+        calculateTotalCicilan();
+    });
 });
+
 </script>
 
 </body>
