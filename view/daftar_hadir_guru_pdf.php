@@ -1,6 +1,6 @@
 <?php
 require('../fpdf.php');
-include '../includes/koneksi.php';
+include('../includes/koneksi.php');
 
 // Buat kelas PDF
 class PDF extends FPDF
@@ -8,8 +8,14 @@ class PDF extends FPDF
     // Header dokumen
     function Header()
     {
+        global $bulan, $tahun;
         $this->SetFont('Arial', 'B', 16);
-        $this->Cell(0, 10, 'Rekap Daftar Hadir Guru', 0, 1, 'C');
+
+        if ($bulan !== '*' && $tahun !== '') {
+            $this->Cell(0, 10, 'Rekap Daftar Hadir Guru - Bulan: ' . date('F', mktime(0, 0, 0, $bulan, 1)) . ' Tahun: ' . $tahun, 0, 1, 'C');
+        } elseif ($bulan === '*' && $tahun !== '') {
+            $this->Cell(0, 10, 'Rekap Daftar Hadir Guru - Tahun: ' . $tahun, 0, 1, 'C');
+        }
         $this->Ln(5);
     }
 
@@ -26,14 +32,18 @@ class PDF extends FPDF
     {
         // Judul tabel per bulan
         $this->SetFont('Arial', 'B', 12);
-        $this->Cell(0, 10, 'Bulan: ' . date('F', strtotime("$tahun-$bulan-01")) . " $tahun", 0, 1, 'L');
+        if ($bulan !== '*' && $tahun !== '') {
+            $this->Cell(0, 10, 'Bulan: ' . date('F', strtotime("$tahun-$bulan-01")) . " $tahun", 0, 1, 'L');
+        } elseif ($bulan === '*' && $tahun !== '') {
+            $this->Cell(0, 10, 'Tahun: ' . $tahun, 0, 1, 'L');
+        }
         $this->Ln(2);
 
         // Header tabel dengan warna
         $this->SetFillColor(200, 220, 255); // Warna header
         $this->SetFont('Arial', 'B', 10);
         foreach ($header as $col) {
-            $this->SetDrawColor(0, 0, 0); // Mengatur warna garis menjadi hitam
+            $this->SetDrawColor(0, 0, 0); // Warna garis hitam
             $this->Cell($col['width'], 10, $col['label'], 1, 0, $col['align'], true); // Header tetap berwarna
         }
         $this->Ln();
@@ -43,7 +53,7 @@ class PDF extends FPDF
         foreach ($data as $row) {
             foreach ($header as $col) {
                 $value = $row[$col['field']];
-                $this->SetDrawColor(0, 0, 0); // Mengatur warna garis menjadi hitam setiap kali menggambar cell
+                $this->SetDrawColor(0, 0, 0); // Warna garis hitam
                 if ($col['field'] === 'tanda_tangan') {
                     // Gambar checkbox dengan centang atau silang
                     $x = $this->GetX();
@@ -74,14 +84,33 @@ class PDF extends FPDF
     }
 }
 
-// Ambil semua data dari database, dikelompokkan per bulan dan tahun
-$sql = "SELECT MONTH(daftar_hadir_guru.date) AS bulan, YEAR(daftar_hadir_guru.date) AS tahun, 
-               daftar_hadir_guru.date AS tanggal, guru.nama, 
-               daftar_hadir_guru.jam_datang, daftar_hadir_guru.jam_pulang, 
-               daftar_hadir_guru.keterangan, daftar_hadir_guru.tanda_tangan1
-        FROM daftar_hadir_guru
-        JOIN guru ON guru.id_guru = daftar_hadir_guru.id_guru
-        ORDER BY tahun, bulan, daftar_hadir_guru.date";
+// Ambil parameter bulan dan tahun dari request
+$bulan = isset($_GET['bulan']) ? $_GET['bulan'] : '*';
+$tahun = isset($_GET['tahun']) ? $_GET['tahun'] : '';
+
+// Bangun query SQL berdasarkan bulan dan tahun yang dipilih
+if ($bulan === '*' && $tahun !== '') {
+    $sql = "SELECT MONTH(daftar_hadir_guru.date) AS bulan, YEAR(daftar_hadir_guru.date) AS tahun, 
+                   daftar_hadir_guru.date AS tanggal, guru.nama, 
+                   daftar_hadir_guru.jam_datang, daftar_hadir_guru.jam_pulang, 
+                   daftar_hadir_guru.keterangan, daftar_hadir_guru.tanda_tangan1
+            FROM daftar_hadir_guru
+            JOIN guru ON guru.id_guru = daftar_hadir_guru.id_guru
+            WHERE YEAR(daftar_hadir_guru.date) = '$tahun'
+            ORDER BY tahun, bulan, daftar_hadir_guru.date";
+} elseif ($bulan !== '*' && $tahun !== '') {
+    $sql = "SELECT MONTH(daftar_hadir_guru.date) AS bulan, YEAR(daftar_hadir_guru.date) AS tahun, 
+                   daftar_hadir_guru.date AS tanggal, guru.nama, 
+                   daftar_hadir_guru.jam_datang, daftar_hadir_guru.jam_pulang, 
+                   daftar_hadir_guru.keterangan, daftar_hadir_guru.tanda_tangan1
+            FROM daftar_hadir_guru
+            JOIN guru ON guru.id_guru = daftar_hadir_guru.id_guru
+            WHERE MONTH(daftar_hadir_guru.date) = '$bulan' AND YEAR(daftar_hadir_guru.date) = '$tahun'
+            ORDER BY tahun, bulan, daftar_hadir_guru.date";
+} else {
+    echo "Bulan dan tahun harus dipilih.";
+    exit;
+}
 
 $result = $conn->query($sql);
 
@@ -107,7 +136,10 @@ if ($result->num_rows > 0) {
         ];
     }
 } else {
-    echo "Tidak ada data.";
+    echo '<script>
+        alert("Tidak ada data untuk bulan dan tahun yang dipilih.");
+        window.location.href = "daftar_hadir_guru.php"; // Ganti dengan URL halaman sebelumnya
+    </script>';
     exit;
 }
 
@@ -131,5 +163,6 @@ foreach ($data_per_bulan as $key => $data) {
     $pdf->AddTable($header, $data, $bulan, $tahun);
 }
 
-$pdf->Output('D', 'rekap_daftar_hadir_guru.pdf');
+$filename = 'rekap_daftar_hadir_guru_bulan_' . $bulan . '_tahun_' . $tahun . '.pdf';
+$pdf->Output('D', $filename);
 ?>

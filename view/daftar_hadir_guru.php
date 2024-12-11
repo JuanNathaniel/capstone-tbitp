@@ -119,7 +119,8 @@ session_regenerate_id(true);
                 <div class="d-flex justify-content-between mb-3">
                     <div>
                         <button class="btn btn-primary" onclick="window.location.href='create_daftar_hadir_guru.php'">Create</button>
-                        <button class="btn btn-primary" onclick="window.location.href='daftar_hadir_guru_pdf.php'">Download PDF</button>
+                        <!-- <button class="btn btn-primary" onclick="window.location.href='daftar_hadir_guru_pdf.php'">Download PDF</button> -->
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pilihBulanModal">Download PDF </button>
                     </div>
 
                     <div class="d-flex align-items-center filter-container">
@@ -339,6 +340,53 @@ session_regenerate_id(true);
             </div>
         </div>
     </div>
+    <!-- Modal Pilih Bulan -->
+    <div class="modal fade" id="pilihBulanModal" tabindex="-1" aria-labelledby="pilihBulanLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pilihBulanLabel">Pilih Bulan dan Tahun untuk Download</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="daftar_hadir_guru_pdf.php" method="GET">
+                        <div class="mb-3">
+                            <label for="bulan" class="form-label">Pilih Bulan</label>
+                            <select id="bulan" name="bulan" class="form-select" required>
+                                <option value="*" selected>Semua Bulan</option>
+                                <?php
+                                // Menampilkan daftar bulan
+                                for ($m = 1; $m <= 12; $m++) {
+                                    $month = str_pad($m, 2, "0", STR_PAD_LEFT);
+                                    echo "<option value='$month'>" . date('F', mktime(0, 0, 0, $m, 1)) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tahun" class="form-label">Pilih Tahun</label>
+                            <select id="tahun" name="tahun" class="form-select" required>
+                                <?php
+                                // Menampilkan tahun saat ini dan tahun sebelumnya
+                                $currentYear = date('Y');
+                                for ($y = $currentYear; $y >= $currentYear - 5; $y--) {
+                                    echo "<option value='$y'>$y</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Download</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
                                         
     <script>
         // Menangani klik pada tombol edit
@@ -369,7 +417,6 @@ session_regenerate_id(true);
             });
         });
     </script>
-
 
     <?php
         if (isset($_GET['status']) && $_GET['status'] == 'deleted') {
