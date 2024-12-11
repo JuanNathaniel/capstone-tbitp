@@ -33,8 +33,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     $date = $_POST['date'];
     $keterangan = $_POST['keterangan'] ?? '';
 
+    // Menambah data pembayaran default untuk anak baru di tabel rekapitulasi_pembayaran
+    $payments = [
+        'Pendaftaran' => [$pendaftaran, 0, 0, ''],
+        'SPP Bulan' => [$spp_bulan, 0, 0, ''],
+        'Seragam' => [$seragam, 0, 0, ''],
+        'Pengembangan Sekolah' => [$pengembangan_sekolah, 0, 0, ''],
+        'Kegiatan Pembelajaran' => [$kegiatan_pembelajaran, 0, 0, ''],
+        'keterlambatan' => [$keterlambatan, 0, 0, ''],
+        'infaq' => [$infaq, 0, 0, '']
+    ];
+
+    // // Query untuk mendapatkan id anak berdasarkan nama
+    // $query = "SELECT id FROM anak WHERE nama = ?";
+    // $stmt = $pdo->prepare($query); // Gunakan PDO
+    // $stmt->execute([$nama]);
+    // $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    // $idAnak = $result['id'];
+
+    //inituh buat rekapitulasi
+    $sql3 = "INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, jumlah, cicilan_1, cicilan_2, keterangan) 
+            VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt3 = $conn->prepare($sql3);
+
+    foreach ($payments as $jenis => $data) {
+        $stmt3->bind_param("isiiis", $nama, $jenis, $data[0], $data[1], $data[2], $data[3]);
+        if (!$stmt3->execute()) {
+            throw new Exception("Gagal memasukkan data pembayaran untuk jenis: " . $jenis);
+        }
+    }
+
     // Menyimpan data ke database
-$sql = "INSERT INTO laporan_dana (nama, pendaftaran, spp_bulan, seragam, pengembangan_sekolah, kegiatan_pembelajaran, keterlambatan, infaq, keterangan, date)
+    $sql = "INSERT INTO laporan_dana (nama, pendaftaran, spp_bulan, seragam, pengembangan_sekolah, kegiatan_pembelajaran, keterlambatan, infaq, keterangan, date)
         VALUES ('$nama', '$pendaftaran', '$spp_bulan', '$seragam', '$pengembangan_sekolah', '$kegiatan_pembelajaran', '$keterlambatan', '$infaq', '$keterangan', '$date')";
 
     if ($conn->query($sql) === TRUE) {
@@ -65,7 +95,13 @@ if ($pendaftaran < 0 || $spp_bulan < 0 || $seragam < 0 || $pengembangan_sekolah 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Input Laporan Dana</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .transition-bg {
+            background: linear-gradient(to right, #344EAD, #1767A6); /* Gradasi horizontal */
+        }
+    </style>
 </head>
+
 <body>
 
 <div class="container-fluid">
