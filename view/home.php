@@ -32,7 +32,7 @@
             <?php include 'sidebar.php'; ?>
 
             <!-- Konten Utama -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+            <main class="col-md-9 ms-sm-auto col-lg-10 mt-4">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-8 rounded p-3 mx-2" style="background-color: #AB886D;">
@@ -40,13 +40,13 @@
                             <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
                                 <div class="carousel-inner">
                                     <div class="carousel-item active">
-                                        <img src="asset/image1.jpg" style="object-fit: cover; height: 400px;" class="d-block w-100" alt="Image 1">
+                                        <img src="asset/image1.jpg?<?php echo time(); ?>" style="object-fit: cover; height: 400px;" class="d-block w-100" alt="Image 1">
                                     </div>
                                     <div class="carousel-item">
-                                        <img src="asset/image2.jpg" style="object-fit: cover; height: 400px;" class="d-block w-100" alt="Image 2">
+                                        <img src="asset/image2.jpg?<?php echo time(); ?>" style="object-fit: cover; height: 400px;" class="d-block w-100" alt="Image 2">
                                     </div>
                                     <div class="carousel-item">
-                                        <img src="asset/image3.jpg" style="object-fit: cover; height: 400px;" class="d-block w-100" alt="Image 3">
+                                        <img src="asset/image3.jpg?<?php echo time(); ?>" style="object-fit: cover; height: 400px;" class="d-block w-100" alt="Image 3">
                                     </div>
                                 </div>
                                 <a class="carousel-control-prev" href="#carouselExampleAutoplaying" role="button" data-bs-slide="prev">
@@ -58,12 +58,16 @@
                                     <span class="visually-hidden">Next</span>
                                 </a>
                             </div>
+
                             <!-- Akhir Carousel Gambar -->
+                            <br>
+                            <p class="h7 text-white">Foto-foto yang terlihat di sini menggambarkan suasana penuh kebersamaan dan semangat di TPA Firdaus. Di setiap momen yang diabadikan, terlihat anak-anak yang antusias belajar, menggali ilmu agama dengan penuh perhatian dan rasa ingin tahu. Setiap senyum yang terlihat adalah harapan untuk masa depan yang lebih cerah, di mana anak-anak ini tidak hanya tumbuh menjadi cerdas dalam hal pengetahuan, tetapi juga bijak dalam menyikapi kehidupan.</p>
+                            <p class="h7 text-white">Semoga Allah SWT senantiasa membimbing mereka di jalan yang benar dan memberikan keberkahan dalam setiap langkah mereka.</p>
                         </div>
 
                         <div class="col-sm-3 rounded p-3 mx-4" style="background-color: #AB886D;">
                             <h2 class="text-white">About us</h2>
-                            <p class="h7 text-white"> yang penuh kasih dan mendukung. Dengan pengajar yang berkompeten, kami bertujuan membentuk generasi yang cerdas, berakhlak mulia, dan taat beragama. Di TPA Firdaus, kami percaya pendidikan agama adalah fondasi penting untuk masa depan yang lebih baik.</p>
+                            <p class="h7 text-white">Kami adalah lembaga pendidikan yang penuh kasih, dengan pengajar yang berkompeten, bertujuan membentuk generasi muda yang cerdas, berakhlak mulia, dan taat beragama. Di TPA Firdaus, kami percaya pendidikan agama adalah fondasi penting untuk masa depan yang lebih baik. Kami tidak hanya mengajarkan pengetahuan agama, tetapi juga mengembangkan karakter dan kepribadian anak agar menjadi pribadi yang penuh empati, tanggung jawab, dan integritas. Melalui pendidikan yang baik, kami berkomitmen membekali mereka dengan nilai-nilai yang bermanfaat bagi kehidupan dunia dan akhirat.</p>
                         </div>
                     </div>
                 </div>
