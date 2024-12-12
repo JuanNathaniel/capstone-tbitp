@@ -142,6 +142,31 @@ if (isset($_POST['delete_id'])) {
     $conn->query($sql_history);
 
     // Menghapus data dari database
+    // Query untuk mendapatkan id_anak
+    $sql = "SELECT nama FROM laporan_dana WHERE id = ?"; //nama == id
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $id); // 'i' untuk integer
+    $stmt->execute();
+
+    // Ambil hasil query
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $id_anak = $row['nama'];
+    } else {
+        echo "Data tidak ditemukan untuk id_LP = $id";
+    }
+
+    // Tutup statement
+    $stmt->close();
+    $sql_delete_2 = "DELETE FROM rekapitulasi_pembayaran WHERE id_anak = $id_anak";
+
+    if ($conn->query($sql_delete_2) === TRUE) {
+        echo "Data berhasil dihapus";
+    } else {
+        echo "Error: " . $conn->error;
+    }
+
+    // Menghapus data dari database
     $sql_delete = "DELETE FROM laporan_dana WHERE id='$id'";
 
     if ($conn->query($sql_delete) === TRUE) {
@@ -150,14 +175,6 @@ if (isset($_POST['delete_id'])) {
         echo "Error: " . $conn->error;
     }
 
-    // Menghapus data dari database
-    $sql_delete_2 = "DELETE * FROM rekapitulasi_pembayaran WHERE id_anak='$id'";
-
-    if ($conn->query($sql_delete_2) === TRUE) {
-        echo "Data berhasil dihapus";
-    } else {
-        echo "Error: " . $conn->error;
-    }
 }
 
 // Mengambil data laporan_dana dengan JOIN ke tabel anak

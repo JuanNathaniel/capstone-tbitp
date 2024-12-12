@@ -35,76 +35,80 @@ if ($resultAnak && $resultAnak->num_rows > 0) {
 }
 
 // Ambil data pembayaran
-$query = "
-    SELECT 
-        jenis_pembayaran, 
-        jumlah, 
-        cicilan_1, 
-        cicilan_2, 
-        (cicilan_1 + cicilan_2) AS total_cicilan, 
-        keterangan 
-    FROM (
-        SELECT 
-            'Pendaftaran' AS jenis_pembayaran, 
-            ld.pendaftaran AS jumlah, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Pendaftaran'
-        WHERE ld.nama = $id_anak
-        UNION ALL
-        SELECT 
-            'SPP Bulan', 
-            ld.spp_bulan, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'SPP Bulan'
-        WHERE ld.nama = $id_anak
-        UNION ALL
-        SELECT 
-            'Seragam', 
-            ld.seragam, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Seragam'
-        WHERE ld.nama = $id_anak
-        UNION ALL
-        SELECT 
-            'Pengembangan Sekolah', 
-            ld.pengembangan_sekolah, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Pengembangan Sekolah'
-        WHERE ld.nama = $id_anak
-        UNION ALL
-        SELECT 
-            'Kegiatan Pembelajaran', 
-            ld.kegiatan_pembelajaran, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Kegiatan Pembelajaran'
-        WHERE ld.nama = $id_anak
-        UNION ALL
-        SELECT 
-            'Keterlambatan', 
-            ld.keterlambatan AS jumlah, 
-            rp.cicilan_1, 
-            rp.cicilan_2, 
-            rp.keterangan
-        FROM laporan_dana ld
-        LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Keterlambatan'
-        WHERE ld.nama = $id_anak
-    ) AS pembayaran
-";
+$query = "SELECT jenis_pembayaran, jumlah, cicilan_1, cicilan_2, 
+                 (cicilan_1 + cicilan_2) AS total_cicilan, keterangan 
+          FROM rekapitulasi_pembayaran 
+          WHERE id_anak = '$id_anak'";
+// $query = "
+//     SELECT 
+//         jenis_pembayaran, 
+//         jumlah, 
+//         cicilan_1, 
+//         cicilan_2, 
+//         (cicilan_1 + cicilan_2) AS total_cicilan, 
+//         keterangan 
+//     FROM (
+//         SELECT 
+//             'Pendaftaran' AS jenis_pembayaran, 
+//             ld.pendaftaran AS jumlah, 
+//             rp.cicilan_1, 
+//             rp.cicilan_2, 
+//             rp.keterangan
+//         FROM laporan_dana ld
+//         LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Pendaftaran'
+//         WHERE ld.nama = $id_anak
+//         UNION ALL
+//         SELECT 
+//             'SPP Bulan', 
+//             ld.spp_bulan, 
+//             rp.cicilan_1, 
+//             rp.cicilan_2, 
+//             rp.keterangan
+//         FROM laporan_dana ld
+//         LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'SPP Bulan'
+//         WHERE ld.nama = $id_anak
+//         UNION ALL
+//         SELECT 
+//             'Seragam', 
+//             ld.seragam, 
+//             rp.cicilan_1, 
+//             rp.cicilan_2, 
+//             rp.keterangan
+//         FROM laporan_dana ld
+//         LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Seragam'
+//         WHERE ld.nama = $id_anak
+//         UNION ALL
+//         SELECT 
+//             'Pengembangan Sekolah', 
+//             ld.pengembangan_sekolah, 
+//             rp.cicilan_1, 
+//             rp.cicilan_2, 
+//             rp.keterangan
+//         FROM laporan_dana ld
+//         LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Pengembangan Sekolah'
+//         WHERE ld.nama = $id_anak
+//         UNION ALL
+//         SELECT 
+//             'Kegiatan Pembelajaran', 
+//             ld.kegiatan_pembelajaran, 
+//             rp.cicilan_1, 
+//             rp.cicilan_2, 
+//             rp.keterangan
+//         FROM laporan_dana ld
+//         LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Kegiatan Pembelajaran'
+//         WHERE ld.nama = $id_anak
+//         UNION ALL
+//         SELECT 
+//             'Keterlambatan', 
+//             ld.keterlambatan AS jumlah, 
+//             rp.cicilan_1, 
+//             rp.cicilan_2, 
+//             rp.keterangan
+//         FROM laporan_dana ld
+//         LEFT JOIN rekapitulasi_pembayaran rp ON ld.nama = rp.id_anak AND rp.jenis_pembayaran = 'Keterlambatan'
+//         WHERE ld.nama = $id_anak
+//     ) AS pembayaran
+// ";
 
 $result = $conn->query($query);
 $data = [];
