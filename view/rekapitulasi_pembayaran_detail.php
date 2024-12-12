@@ -225,15 +225,17 @@ if (isset($_POST['action']) && $_POST['action'] == 'save_data') {
 
     if (!empty($_POST['jenis_pembayaran'])) {
         $jenis_pembayaran = $_POST['jenis_pembayaran'];
+        $jumlah = $_POST = $_POST['jumlah'];
         foreach ($jenis_pembayaran as $key => $jenis) {
-            $jenis = isset($jenis_pembayaran[$key]) ? $jenis_pembayaran[$key] : 'tes';
+            $jenis = isset($jenis_pembayaran[$key]) ? $jenis_pembayaran[$key] : 'null';
+            $jumlah = isset($jumlah[$key]) ? $jumlah[$key] : 0;
             $cicil1 = isset($cicilan_1[$key]) ? $cicilan_1[$key] : 0;
             $cicil2 = isset($cicilan_2[$key]) ? $cicilan_2[$key] : 0;
             $ket = isset($keterangan[$key]) ? $keterangan[$key] : '';
 
             // Insert data rekapitulasi pembayaran baru
-            $stmt = $conn->prepare("INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, cicilan_1, cicilan_2, keterangan) VALUES (?, ?, ?, ?, ?)");
-            $stmt->bind_param("isiis", $id_anak, $jenis, $cicil1, $cicil2, $ket); // Perbaikan tipe data
+            $stmt = $conn->prepare("INSERT INTO rekapitulasi_pembayaran (id_anak, jenis_pembayaran, jumlah, cicilan_1, cicilan_2, keterangan) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("isdiis", $id_anak, $jenis,  $jumlah, $cicil1, $cicil2, $ket); // Perbaikan tipe data
             if (!$stmt->execute()) {
                 echo "Error: " . $stmt->error;
                 exit();

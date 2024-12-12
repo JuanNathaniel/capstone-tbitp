@@ -53,12 +53,76 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
         $conn->query($sql_history);
     }
 
+
+    // Query menggunakan CASE
+    // Query untuk mendapatkan id_anak
+    $sql = "SELECT nama FROM laporan_dana WHERE id = ?"; //nama == id
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $id); // 'i' untuk integer
+    $stmt->execute();
+
+    // Ambil hasil query
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $id_anak = $row['nama'];
+    } else {
+        echo "Data tidak ditemukan untuk id_ld = $id";
+    }
+
+    // Tutup statement
+    $stmt->close();
+
+    $query = "
+    UPDATE rekapitulasi_pembayaran 
+    SET jumlah = CASE jenis_pembayaran 
+        WHEN 'Pendaftaran' THEN ?
+        WHEN 'SPP Bulan' THEN ?
+        WHEN 'Seragam' THEN ?
+        WHEN 'Pengembangan Sekolah' THEN ?
+        WHEN 'Kegiatan Pembelajaran' THEN ?
+        WHEN 'keterlambatan' THEN ?
+        WHEN 'infaq' THEN ?
+        ELSE 0
+    END 
+    WHERE id_anak = ?;
+    ";
+
+    // Prepare statement
+    $stmt = $conn->prepare($query);
+    if ($stmt) {
+    // Bind parameters
+    $stmt->bind_param(
+        'dddddddi', 
+        $pendaftaran, 
+        $spp_bulan, 
+        $seragam, 
+        $pengembangan_sekolah, 
+        $kegiatan_pembelajaran, 
+        $keterlambatan, 
+        $infaq,
+        $id_anak
+    );
+
+    // Eksekusi statement
+    if ($stmt->execute()) {
+        echo "Jumlah rekapitulasi pembayaran berhasil diperbarui && ";
+    } else {
+        echo "Error saat memperbarui data: " . $stmt->error;
+    }
+
+    // Tutup statement
+    $stmt->close();
+    } else {
+        echo "Error saat menyiapkan query: " . $conn->error;
+    }
+
+
     // Update data ke database
     $sql_update = "UPDATE laporan_dana 
-                   SET pendaftaran='$pendaftaran', spp_bulan='$spp_bulan', seragam='$seragam', 
-                       pengembangan_sekolah='$pengembangan_sekolah', kegiatan_pembelajaran='$kegiatan_pembelajaran', 
-                       keterlambatan='$keterlambatan', infaq='$infaq', keterangan='$keterangan' 
-                   WHERE id='$id'";
+    SET pendaftaran='$pendaftaran', spp_bulan='$spp_bulan', seragam='$seragam', 
+        pengembangan_sekolah='$pengembangan_sekolah', kegiatan_pembelajaran='$kegiatan_pembelajaran', 
+        keterlambatan='$keterlambatan', infaq='$infaq', keterangan='$keterangan' 
+    WHERE id='$id'";
 
     if ($conn->query($sql_update) === TRUE) {
         echo "Data berhasil diperbarui";
@@ -81,6 +145,15 @@ if (isset($_POST['delete_id'])) {
     $sql_delete = "DELETE FROM laporan_dana WHERE id='$id'";
 
     if ($conn->query($sql_delete) === TRUE) {
+        echo "Data berhasil dihapus";
+    } else {
+        echo "Error: " . $conn->error;
+    }
+
+    // Menghapus data dari database
+    $sql_delete_2 = "DELETE * FROM rekapitulasi_pembayaran WHERE id_anak='$id'";
+
+    if ($conn->query($sql_delete_2) === TRUE) {
         echo "Data berhasil dihapus";
     } else {
         echo "Error: " . $conn->error;
